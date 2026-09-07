@@ -10,9 +10,9 @@ import { useDaemonSnapshot } from "../daemon/useDaemonSnapshot";
 import { AppsPage, createAppAccessGateway } from "../apps";
 import { CachePage } from "../sections/CachePage";
 import { DiagnosticsPage } from "../sections/DiagnosticsPage";
-import { IdentityPage } from "../sections/IdentityPage";
+import { IdentityPage } from "../identity";
 import { NetworkPage } from "../sections/NetworkPage";
-import { OverviewPage } from "../sections/OverviewPage";
+import { HomePage } from "../home";
 import { PublishedPage } from "../sections/PublishedPage";
 import { RelaysPage } from "../sections/RelaysPage";
 import { SettingsPage } from "../sections/SettingsPage";
@@ -96,7 +96,7 @@ export function ConsoleApp({
         updateCheck={updateCheck}
       >
         <Routes>
-          <Route index element={<OverviewPage snapshot={snapshot} />} />
+          <Route index element={<HomePage snapshot={snapshot} />} />
           <Route
             path="/identity"
             element={<IdentityPage client={client} snapshot={snapshot} />}
