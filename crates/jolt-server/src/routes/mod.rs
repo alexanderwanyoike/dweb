@@ -1,3 +1,4 @@
+pub mod app_access;
 pub mod app_api;
 pub mod app_features;
 pub mod app_sessions;

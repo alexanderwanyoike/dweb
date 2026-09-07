@@ -1,3 +1,4 @@
+import { ThemeToggle } from "./ThemeToggle";
 import { NavLink, useLocation } from "react-router-dom";
 import { consoleRoutes } from "../app/navigation";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
@@ -31,7 +32,7 @@ export function ConsoleShell({
           </svg>
           <div>
             <strong>Jolt Console</strong>
-            <span>local daemon control</span>
+            <span>Your local connection</span>
           </div>
         </div>
 
@@ -57,10 +58,11 @@ export function ConsoleShell({
       <main className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">First-party trust surface</p>
+            <p className="eyebrow">JOLT CONSOLE</p>
             <h1>{currentRoute.label}</h1>
           </div>
           <div className="topbar-actions">
+            <ThemeToggle />
             {updateCheck?.available ? (
               <NavLink className="status-pill pending" to="/settings">
                 Update {updateCheck.version}
@@ -75,7 +77,7 @@ export function ConsoleShell({
           </div>
         </header>
 
-        {children}
+        <div className="workspace-content">{children}</div>
       </main>
     </div>
   );

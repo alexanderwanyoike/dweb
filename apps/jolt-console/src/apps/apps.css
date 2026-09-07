@@ -1,0 +1,311 @@
+.apps-page {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+.apps-intro,
+.access-app-heading,
+.access-request-heading,
+.access-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.apps-intro {
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+.apps-intro h2 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+  margin: 5px 0 8px;
+  font-weight: 600;
+}
+.apps-intro p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 13px;
+}
+.apps-intro .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--faint);
+}
+.apps-page button {
+  padding: 8px 14px;
+  min-height: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.access-section-label {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.2px;
+}
+.access-section-label span {
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+.apps-requests > .access-muted {
+  font-size: 13px;
+}
+.access-app-list {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.access-app + .access-app {
+  border-top: 1px solid var(--line);
+}
+.access-app-heading {
+  padding: 18px 20px;
+}
+.app-monogram {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+.access-app-copy {
+  min-width: 0;
+  flex: 1;
+}
+.access-app h3 {
+  font-size: 15px;
+  margin: 0 0 5px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.access-app-copy p,
+.access-app-copy small {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.access-app-copy small {
+  font-size: 10px;
+  color: var(--faint);
+}
+.status-label {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.access-app-details {
+  border-top: 1px solid var(--line);
+  padding: 16px 20px 20px;
+  background: var(--bg);
+  font-size: 12px;
+}
+.access-detail-heading {
+  justify-content: space-between;
+}
+.access-app-details p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.access-identity {
+  margin-top: 20px;
+}
+.access-identity h4 {
+  margin-bottom: 5px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.access-session {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+.access-session summary,
+.access-dialog summary {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  min-height: 30px;
+  align-items: center;
+}
+.access-session summary > span:first-child {
+  min-width: 0;
+}
+.access-session-body {
+  padding: 10px 12px;
+}
+.access-history {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.access-history > summary,
+.access-grant-summary > summary {
+  min-height: 40px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+.access-history > p {
+  font-size: 12px;
+}
+.access-permissions {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.access-permissions li {
+  display: grid;
+  gap: 4px;
+  padding: 8px 12px;
+  border-left: 2px solid var(--line-strong);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.access-permissions code {
+  font-size: 11px;
+  color: var(--muted);
+}
+.access-permissions small {
+  color: var(--muted);
+}
+.access-permissions strong {
+  color: var(--red);
+  font-weight: 500;
+}
+.access-request {
+  background: var(--request-bg);
+  border: 1px solid var(--request-border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 16px 20px;
+}
+.access-request-summary {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  text-align: left;
+  gap: 5px;
+  background: none;
+  border: 0;
+  padding: 0 !important;
+  font-weight: 400 !important;
+}
+.access-request-summary strong {
+  font-size: 14px;
+}
+.access-request-summary > span {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.access-request-details {
+  border-top: 1px solid var(--request-border);
+  margin-top: 16px;
+  padding-top: 12px;
+  font-size: 12px;
+}
+.access-actions {
+  display: flex;
+  gap: 8px;
+}
+.apps-page .access-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.apps-page .access-danger,
+.access-dialog .access-danger {
+  color: var(--red);
+  border-color: var(--line-strong);
+}
+.access-error {
+  color: var(--red);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  padding: 12px 0;
+}
+.access-muted,
+.access-footnote {
+  color: var(--muted);
+}
+.access-footnote {
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 20px 0 0;
+  max-width: 580px;
+}
+.access-empty {
+  padding: 30px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.access-empty h3 {
+  color: var(--text);
+  font-weight: 500;
+}
+.access-dialog {
+  width: min(580px, 90vw);
+  max-height: 85vh;
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 24px;
+  color: var(--text);
+}
+.access-dialog::backdrop {
+  background: rgb(0 0 0 / 40%);
+}
+.access-dialog h2 {
+  font-size: 21px;
+  margin-top: 0;
+}
+.access-dialog p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.access-dialog-scroll {
+  max-height: 38vh;
+  overflow: auto;
+  border-block: 1px solid var(--line);
+  padding: 10px 0;
+}
+.access-dialog details {
+  padding: 8px 0;
+  font-size: 12px;
+}
+.access-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 18px;
+}
+.access-dialog button {
+  min-height: 40px;
+  padding: 8px 16px;
+}

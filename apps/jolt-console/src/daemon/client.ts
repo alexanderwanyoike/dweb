@@ -154,8 +154,8 @@ export async function loadAppPermissions(
   client: DaemonClient,
 ): Promise<AppPermissionsPayload> {
   const [requests, sessions, localIdentities] = await Promise.all([
-    client.get<AppSessionGrant[]>("/admin/v1/app-requests"),
-    client.get<AppSessionGrant[]>("/admin/v1/app-sessions"),
+    client.get<AppSessionGrant[]>("/admin/v1/app-access/requests"),
+    client.get<AppSessionGrant[]>("/admin/v1/app-access/sessions"),
     client.get<LocalIdentitiesPayload>("/admin/v1/identities"),
   ]);
 

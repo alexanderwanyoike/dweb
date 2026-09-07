@@ -4,19 +4,21 @@
   "version": "0.5.3",
   "identifier": "net.jolt.console",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "yarn dev",
     "devUrl": "http://127.0.0.1:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "yarn build",
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
         "title": "Jolt Console",
-        "width": 1280,
-        "height": 820,
-        "minWidth": 980,
-        "minHeight": 720
+        "width": 1100,
+        "height": 760,
+        "minWidth": 1100,
+        "minHeight": 760,
+        "resizable": false,
+        "maximizable": false
       }
     ],
     "security": {
@@ -25,9 +27,17 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["appimage", "deb"],
-    "externalBin": ["binaries/jolt"],
-    "icon": ["icons/icon.png", "icons/icon.ico"]
+    "targets": [
+      "appimage",
+      "deb"
+    ],
+    "externalBin": [
+      "binaries/jolt"
+    ],
+    "icon": [
+      "icons/icon.png",
+      "icons/icon.ico"
+    ]
   },
   "plugins": {
     "updater": {

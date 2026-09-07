@@ -159,6 +159,18 @@ pub fn build_router_with_stores(
             post(routes::app_api::pin_home_relay),
         )
         .route(
+            "/admin/v1/app-access/requests",
+            get(routes::app_access::list_requests),
+        )
+        .route(
+            "/admin/v1/app-access/sessions",
+            get(routes::app_access::list_sessions),
+        )
+        .route(
+            "/admin/v1/app-access/sessions/{session_id}/revoke",
+            post(routes::app_access::revoke_session),
+        )
+        .route(
             "/admin/v1/app-requests",
             get(routes::app_sessions::list_requests),
         )

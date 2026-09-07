@@ -9199,3 +9199,113 @@ async fn test_publish_then_fetch_integration() {
 
     handle.shutdown().await.ok();
 }
+
+#[tokio::test]
+async fn test_console_app_access_spans_local_identities_without_switching_identity() {
+    let session_dir = tempfile::tempdir().unwrap();
+    let (port, handle, _dir) =
+        start_test_server_with_session_path(session_dir.path().join("sessions.json")).await;
+    let client = reqwest::Client::new();
+    let primary = handle.local_identity_address().unwrap().to_string();
+    let work: serde_json::Value = client
+        .post(format!("{}/admin/v1/identities", base_url(port)))
+        .json(&serde_json::json!({"label":"Work"}))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let work = work["address"].as_str().unwrap();
+    let (_, primary_session) =
+        approve_app_session_until(&client, port, &primary, &["resolve:public"], None).await;
+    let (_, work_session) =
+        approve_app_session_until(&client, port, work, &["resolve:public"], None).await;
+    let (_, foreign_session) =
+        approve_app_session_until(&client, port, "foreign.jolt", &["resolve:public"], None).await;
+    let request: serde_json::Value = client.post(format!("{}/app/v1/sessions/request", base_url(port)))
+        .json(&serde_json::json!({"app_id":"notes.test","app_name":"Notes","requested_identity":work,"requested_capabilities":["resolve:public"]}))
+        .send().await.unwrap().json().await.unwrap();
+    let request_id = request["request_id"].as_str().unwrap();
+    let requests_response = client
+        .get(format!("{}/admin/v1/app-access/requests", base_url(port)))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(requests_response.status(), 200);
+    let requests: serde_json::Value = requests_response.json().await.unwrap();
+    assert_eq!(requests.as_array().unwrap().len(), 1);
+    assert_eq!(requests[0]["requested_identity"], work);
+    client
+        .post(format!(
+            "{}/admin/v1/app-requests/{request_id}/reject",
+            base_url(port)
+        ))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
+    let history: serde_json::Value = client
+        .get(format!("{}/admin/v1/app-access/requests", base_url(port)))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(history[0]["status"], "rejected");
+    let sessions: serde_json::Value = client
+        .get(format!("{}/admin/v1/app-access/sessions", base_url(port)))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(sessions.as_array().unwrap().len(), 2);
+    assert!(sessions
+        .as_array()
+        .unwrap()
+        .iter()
+        .all(|session| session["session_token"].is_null()));
+    let denied = client
+        .post(format!(
+            "{}/admin/v1/app-access/sessions/{foreign_session}/revoke",
+            base_url(port)
+        ))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(denied.status(), 404);
+    let revoked = client
+        .post(format!(
+            "{}/admin/v1/app-access/sessions/{work_session}/revoke",
+            base_url(port)
+        ))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(revoked.status(), 200);
+    let selected: serde_json::Value = client
+        .get(format!("{}/admin/v1/identities", base_url(port)))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(selected["active_identity"], primary);
+    let scoped: serde_json::Value = client
+        .get(format!("{}/admin/v1/app-sessions", base_url(port)))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(scoped.as_array().unwrap().len(), 1);
+    assert_eq!(scoped[0]["session_id"], primary_session);
+    assert_eq!(scoped[0]["status"], "active");
+    handle.shutdown().await.ok();
+}

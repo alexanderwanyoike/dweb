@@ -124,7 +124,7 @@ function pendingChirpRequestClient(
   return {
     daemonUrl: "http://127.0.0.1:9862",
     get: vi.fn(async (path: string) => {
-      if (path === "/admin/v1/app-requests") {
+      if (path === "/admin/v1/app-access/requests") {
         return [
           {
             request_id: "req_chirp",
@@ -139,7 +139,7 @@ function pendingChirpRequestClient(
           },
         ];
       }
-      if (path === "/admin/v1/app-sessions") return [];
+      if (path === "/admin/v1/app-access/sessions") return [];
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
@@ -156,7 +156,7 @@ async function expectChirpCapabilityBlocked(capability: string) {
     await screen.findByRole("button", { name: /request details/i }),
   );
   expect(
-    screen.getByText("admin-only request: cannot be approved"),
+    screen.getByText("This request includes permissions Console cannot approve."),
   ).toBeInTheDocument();
   expect(
     screen.getByRole("button", { name: "Approve Chirp" }),
@@ -518,7 +518,7 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           return [
             {
               request_id: "req_scratch",
@@ -562,7 +562,7 @@ describe("Console section pages", () => {
             },
           ];
         }
-        if (path === "/admin/v1/app-sessions") {
+        if (path === "/admin/v1/app-access/sessions") {
           return [
             {
               request_id: "req_pastey_active",
@@ -605,34 +605,28 @@ describe("Console section pages", () => {
       name: /request details/i,
     });
     expect(pendingRows[0]).toHaveTextContent("Scratch");
-    expect(pendingRows[1]).toHaveTextContent("Archiver");
-    expect(pendingRows[1]).toHaveTextContent("rejected");
-    expect(pendingRows[2]).toHaveTextContent("Pastey");
-
-    const sessionRows = screen.getAllByRole("button", {
-      name: /session details/i,
-    });
-    expect(sessionRows[0]).toHaveTextContent("Pastey");
-    expect(sessionRows[1]).toHaveTextContent("Notes");
+    expect(pendingRows[1]).toHaveTextContent("Pastey");
+    expect(pendingRows[2]).toHaveTextContent("Archiver");
+    await userEvent.click(screen.getByText("Rejected requests (1)"));
+    expect(screen.getByRole("button", { name: /Archiver.*request details/i })).toHaveTextContent("rejected");
 
     expect(
       screen.queryByText("create or update signed paths under /pastes/*"),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(pendingRows[2]);
+    await userEvent.click(pendingRows[1]);
     expect(screen.getAllByText("alice.jolt")).not.toHaveLength(0);
     expect(
       screen.getByText("create or update signed paths under /pastes/*"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("admin-only request: cannot be approved"),
+      screen.getByText("This request includes permissions Console cannot approve."),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Approve Pastey" }),
     ).toBeDisabled();
 
-    await userEvent.click(sessionRows[1]);
-    expect(screen.getByText("Last used 2026-05-28 20:30")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Manage Notes access" }));
 
     await userEvent.click(
       screen.getByRole("button", { name: "Reject Pastey" }),
@@ -641,9 +635,10 @@ describe("Console section pages", () => {
       "/admin/v1/app-requests/req_pastey/reject",
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Revoke Notes" }));
+    await userEvent.click(screen.getByRole("button", { name: "Revoke Notes access" }));
+    await userEvent.click(screen.getByRole("button", { name: "Revoke access" }));
     expect(client.post).toHaveBeenCalledWith(
-      "/admin/v1/app-sessions/sess_notes/revoke",
+      "/admin/v1/app-access/sessions/sess_notes/revoke",
     );
   });
 
@@ -661,7 +656,7 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           return [
             {
               request_id: "req_private_pastey",
@@ -676,7 +671,7 @@ describe("Console section pages", () => {
             },
           ];
         }
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") return localIdentitiesPayload();
         throw new Error(`unexpected path ${path}`);
       }),
@@ -698,7 +693,7 @@ describe("Console section pages", () => {
       screen.getByText("decrypt content under /pastes/*"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("admin-only request: cannot be approved"),
+      screen.queryByText("This request includes permissions Console cannot approve."),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
@@ -739,7 +734,7 @@ describe("Console section pages", () => {
       ),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("admin-only request: cannot be approved"),
+      screen.queryByText("This request includes permissions Console cannot approve."),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
@@ -785,7 +780,7 @@ describe("Console section pages", () => {
       ),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("admin-only request: cannot be approved"),
+      screen.queryByText("This request includes permissions Console cannot approve."),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
@@ -818,7 +813,7 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           return [
             {
               request_id: "req_spoke",
@@ -833,7 +828,7 @@ describe("Console section pages", () => {
             },
           ];
         }
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") return localIdentitiesPayload();
         throw new Error(`unexpected path ${path}`);
       }),
@@ -855,7 +850,7 @@ describe("Console section pages", () => {
       screen.getByText("accept or reject pending incoming app objects"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("admin-only request: cannot be approved"),
+      screen.queryByText("This request includes permissions Console cannot approve."),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
@@ -875,7 +870,7 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           return [
             {
               request_id: "req_selected_identity",
@@ -889,7 +884,7 @@ describe("Console section pages", () => {
             },
           ];
         }
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") {
           return {
             active_identity: "work.jolt",
@@ -919,8 +914,8 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") return [];
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/requests") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") return localIdentitiesPayload();
         throw new Error(path);
       }),
@@ -929,10 +924,8 @@ describe("Console section pages", () => {
 
     render(<AppsPage client={client} />);
 
-    expect(screen.getByText(/admin\/v1\/app-requests/)).toBeInTheDocument();
-    expect(screen.getByText(/admin\/v1\/app-sessions/)).toBeInTheDocument();
     expect(await screen.findByText("No app requests yet.")).toBeInTheDocument();
-    expect(screen.getByText("No app sessions yet.")).toBeInTheDocument();
+    expect(screen.getByText("A place for your apps.")).toBeInTheDocument();
   });
 
   it("updates app permission requests without manual refresh", async () => {
@@ -940,11 +933,11 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           const requestCalls = vi
             .mocked(client.get)
             .mock.calls.filter(
-              ([calledPath]) => calledPath === "/admin/v1/app-requests",
+              ([calledPath]) => calledPath === "/admin/v1/app-access/requests",
             ).length;
           return requestCalls < 2
             ? []
@@ -962,7 +955,7 @@ describe("Console section pages", () => {
                 },
               ];
         }
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") return localIdentitiesPayload();
         throw new Error(`unexpected path ${path}`);
       }),
@@ -988,10 +981,10 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") {
+        if (path === "/admin/v1/app-access/requests") {
           throw new Error("daemon offline");
         }
-        if (path === "/admin/v1/app-sessions") return [];
+        if (path === "/admin/v1/app-access/sessions") return [];
         if (path === "/admin/v1/identities") return localIdentitiesPayload();
         throw new Error(`unexpected path ${path}`);
       }),
@@ -1020,12 +1013,12 @@ describe("Console section pages", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") return [];
-        if (path === "/admin/v1/app-sessions") {
+        if (path === "/admin/v1/app-access/requests") return [];
+        if (path === "/admin/v1/app-access/sessions") {
           const sessionCalls = vi
             .mocked(client.get)
             .mock.calls.filter(
-              ([calledPath]) => calledPath === "/admin/v1/app-sessions",
+              ([calledPath]) => calledPath === "/admin/v1/app-access/sessions",
             ).length;
           return [
             {
@@ -1053,17 +1046,13 @@ describe("Console section pages", () => {
     render(<AppsPage client={client} refreshIntervalMs={1000} />);
 
     await act(async () => {});
-    expect(
-      screen.getByRole("button", { name: /session details/i }),
-    ).toHaveTextContent("active");
+    expect(screen.getByText("Access allowed")).toBeInTheDocument();
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000);
     });
 
-    expect(
-      screen.getByRole("button", { name: /session details/i }),
-    ).toHaveTextContent("revoked");
+    expect(screen.getByText("No active access")).toBeInTheDocument();
   });
 
   it("renders network peer counts", () => {

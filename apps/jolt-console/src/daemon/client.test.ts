@@ -307,8 +307,8 @@ describe("loadAppPermissions", () => {
     const client: DaemonClient = {
       daemonUrl: "http://127.0.0.1:9862",
       get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-requests") return [{ request_id: "req_1" }];
-        if (path === "/admin/v1/app-sessions")
+        if (path === "/admin/v1/app-access/requests") return [{ request_id: "req_1" }];
+        if (path === "/admin/v1/app-access/sessions")
           return [{ session_id: "sess_1" }];
         if (path === "/admin/v1/identities") {
           return {
