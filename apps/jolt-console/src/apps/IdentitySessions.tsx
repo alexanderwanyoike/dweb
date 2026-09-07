@@ -1,4 +1,5 @@
-import type { AppSessionGrant, LocalIdentitiesPayload } from "../daemon/types";
+import type { AppSessionGrant } from "./model";
+import type { LocalIdentitiesPayload } from "../daemon/types";
 import { identityFor, olderSession } from "./model";
 import { SessionDetails } from "./SessionDetails";
 

@@ -1,15 +1,18 @@
 import { useState } from "react";
-import type { AppSessionGrant, LocalIdentitiesPayload } from "../daemon/types";
+import type { LocalIdentitiesPayload } from "../daemon/types";
 import {
   exactGrants,
   identityFor,
   identityGroups,
   permissionsDiffer,
   type AppAccess,
+  type AppSessionGrant,
 } from "./model";
-import { SessionDetails, timeLabel } from "./SessionDetails";
+import { SessionDetails } from "./SessionDetails";
+import { sessionTimeLabel } from "./format";
 import { IdentitySessions } from "./IdentitySessions";
 import { PermissionList } from "./PermissionList";
+
 export function AppCard({
   app,
   identities,
@@ -22,6 +25,16 @@ export function AppCard({
   onRevoke(name: string, sessions: AppSessionGrant[]): void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const groups = identityGroups(app.active);
+  const sessionCount = app.active.length;
+  const hasActiveAccess = sessionCount > 0;
+  const accessStatus = hasActiveAccess ? "Access allowed" : "No active access";
+  const sessionNoun = sessionCount === 1 ? "session" : "sessions";
+  const identityNoun = groups.length === 1 ? "identity" : "identities";
+  const accessSummary = `${sessionCount} authorised ${sessionNoun} · ${groups.length} ${identityNoun}`;
+  const grants = exactGrants(app.active);
+  const permissionsVary = permissionsDiffer(app.active);
+
   return (
     <article className="access-app">
       <div className="access-app-heading">
@@ -30,19 +43,9 @@ export function AppCard({
         </span>
         <div className="access-app-copy">
           <h3>
-            {app.name}{" "}
-            <span className="status-label">
-              {app.active.length ? "Access allowed" : "No active access"}
-            </span>
+            {app.name} <span className="status-label">{accessStatus}</span>
           </h3>
-          <p>
-            {app.active.length} authorised{" "}
-            {app.active.length === 1 ? "session" : "sessions"} ·{" "}
-            {identityGroups(app.active).length}{" "}
-            {identityGroups(app.active).length === 1
-              ? "identity"
-              : "identities"}
-          </p>
+          <p>{accessSummary}</p>
           <small>{app.id}</small>
         </div>
         <button
@@ -56,8 +59,8 @@ export function AppCard({
       {expanded && (
         <div className="access-app-details">
           <div className="access-detail-heading">
-            <p>Last used: {timeLabel(app.active[0]?.last_used_at)}</p>
-            {app.active.length > 0 && (
+            <p>Last used: {sessionTimeLabel(app.active[0]?.last_used_at)}</p>
+            {hasActiveAccess && (
               <button
                 className="access-danger"
                 disabled={busy}
@@ -68,19 +71,19 @@ export function AppCard({
               </button>
             )}
           </div>
-          {permissionsDiffer(app.active) && (
+          {permissionsVary && (
             <p className="access-muted">
               Permissions differ between sessions. This list includes all
               authorised access; inspect a session for its exact grants.
             </p>
           )}
-          {app.active.length > 0 && (
+          {hasActiveAccess && (
             <details className="access-grant-summary">
               <summary>What this app can access</summary>
-              <PermissionList grants={exactGrants(app.active)} />
+              <PermissionList grants={grants} />
             </details>
           )}
-          {identityGroups(app.active).map((group) => (
+          {groups.map((group) => (
             <IdentitySessions
               key={group.identity}
               {...group}

@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, expect, it, vi } from "vitest";
 import { ConsoleShell } from "./ConsoleShell";
-import { AppsPage } from "../sections/AppsPage";
+import { AppsPage, createAppAccessGateway } from "../apps";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
 import type { DaemonClient } from "../daemon/client";
 
@@ -28,7 +28,10 @@ it("offers one Apps refresh that reloads access, not the unrelated daemon summar
   render(
     <MemoryRouter initialEntries={["/apps"]}>
       <ConsoleShell snapshot={snapshot} consoleVersion="0.5.3">
-        <AppsPage client={client} refreshIntervalMs={0} />
+        <AppsPage
+          gateway={createAppAccessGateway(client)}
+          refreshIntervalMs={0}
+        />
       </ConsoleShell>
     </MemoryRouter>,
   );

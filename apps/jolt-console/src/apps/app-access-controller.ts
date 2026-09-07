@@ -1,19 +1,21 @@
-import { loadAppPermissions, type DaemonClient } from "../daemon/client";
-import type { AppPermissionsPayload, AppSessionGrant } from "../daemon/types";
-import { approveRequest, rejectRequest, revokeSessions } from "./commands";
-const empty: AppPermissionsPayload = {
+import type { AppAccessGateway } from "./gateway";
+import type { AppAccessData, AppSessionGrant } from "./model";
+
+const empty: AppAccessData = {
   requests: [],
   sessions: [],
   localIdentities: { active_identity: null, identities: [] },
 };
+
 type Snapshot = {
-  data: AppPermissionsPayload;
+  data: AppAccessData;
   loading: boolean;
   refreshing: boolean;
   busy: boolean;
   error: string | null;
 };
-export class PermissionsResource {
+
+export class AppAccessController {
   private snapshot: Snapshot = {
     data: empty,
     loading: true,
@@ -27,37 +29,45 @@ export class PermissionsResource {
   private running = false;
   private generation = 0;
   private failures = 0;
+
   constructor(
-    private client: DaemonClient,
+    private gateway: AppAccessGateway,
     private interval = 5000,
   ) {}
+
   getSnapshot = () => this.snapshot;
+
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
     return () => {
       this.listeners.delete(listener);
     };
   };
+
   start = () => {
     this.running = true;
     void this.refresh();
   };
+
   stop = () => {
     this.running = false;
     this.generation++;
     this.pending = null;
     clearTimeout(this.timer);
   };
+
   private publish(change: Partial<Snapshot>) {
     this.snapshot = { ...this.snapshot, ...change };
     this.listeners.forEach((listener) => listener());
   }
+
   refresh = (): Promise<boolean> => {
     if (this.pending) return this.pending;
     clearTimeout(this.timer);
     const generation = this.generation;
     this.publish({ refreshing: true });
-    this.pending = loadAppPermissions(this.client)
+    this.pending = this.gateway
+      .load()
       .then((data) => {
         if (generation !== this.generation) return false;
         this.failures = 0;
@@ -81,12 +91,14 @@ export class PermissionsResource {
       });
     return this.pending;
   };
+
   private schedule() {
     clearTimeout(this.timer);
     if (!this.running || this.interval <= 0 || this.snapshot.busy) return;
     const delay = Math.min(this.interval * 2 ** this.failures, 30000);
     this.timer = setTimeout(() => void this.refresh(), delay);
   }
+
   private async perform<T>(operation: () => Promise<T>): Promise<T> {
     if (this.snapshot.busy)
       throw new Error("Another access change is in progress.");
@@ -113,14 +125,17 @@ export class PermissionsResource {
       }
     }
   }
+
   approve = (request: AppSessionGrant) =>
-    this.perform(() => approveRequest(this.client, request));
+    this.perform(() => this.gateway.approve(request));
+
   reject = (request: AppSessionGrant) =>
-    this.perform(() => rejectRequest(this.client, request));
+    this.perform(() => this.gateway.reject(request));
+
   revoke = (sessions: AppSessionGrant[]) =>
     this.perform(async () => {
       const generation = this.generation;
-      const result = await revokeSessions(this.client, sessions);
+      const result = await this.gateway.revoke(sessions);
       if (generation !== this.generation) return result;
       const revoked = new Set(
         result.succeeded.map((session) => session.session_id),

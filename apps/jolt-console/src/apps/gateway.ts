@@ -1,14 +1,31 @@
-import type { DaemonClient } from "../daemon/client";
-import type { AppSessionGrant } from "../daemon/types";
+import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
+import type { LocalIdentitiesPayload } from "../daemon/types";
+import type { AppAccessData, AppSessionGrant, RevocationResult } from "./model";
 import { isGrantableCapability } from "./capabilities";
-export type RevocationResult = {
-  succeeded: AppSessionGrant[];
-  failed: { session: AppSessionGrant; error: string }[];
-};
-export async function approveRequest(
-  client: DaemonClient,
-  request: AppSessionGrant,
-) {
+
+export function createAppAccessGateway(client: DaemonClient) {
+  return {
+    load: () => loadAppAccess(client),
+    approve: (request: AppSessionGrant) => approveRequest(client, request),
+    reject: (request: AppSessionGrant) => rejectRequest(client, request),
+    revoke: (sessions: AppSessionGrant[]) => revokeSessions(client, sessions),
+  };
+}
+
+export type AppAccessGateway = ReturnType<typeof createAppAccessGateway>;
+export const tauriAppAccessGateway = createAppAccessGateway(tauriDaemonClient);
+
+async function loadAppAccess(client: DaemonClient): Promise<AppAccessData> {
+  const [requests, sessions, localIdentities] = await Promise.all([
+    client.get<AppSessionGrant[]>("/admin/v1/app-access/requests"),
+    client.get<AppSessionGrant[]>("/admin/v1/app-access/sessions"),
+    client.get<LocalIdentitiesPayload>("/admin/v1/identities"),
+  ]);
+
+  return { requests, sessions, localIdentities };
+}
+
+async function approveRequest(client: DaemonClient, request: AppSessionGrant) {
   if (
     request.status !== "pending" ||
     !request.requested_capabilities.every(isGrantableCapability)
@@ -25,12 +42,14 @@ export async function approveRequest(
     },
   );
 }
-export function rejectRequest(client: DaemonClient, request: AppSessionGrant) {
+
+function rejectRequest(client: DaemonClient, request: AppSessionGrant) {
   return client.post(
     `/admin/v1/app-requests/${encodeURIComponent(request.request_id)}/reject`,
   );
 }
-export async function revokeSessions(
+
+async function revokeSessions(
   client: DaemonClient,
   sessions: AppSessionGrant[],
 ): Promise<RevocationResult> {

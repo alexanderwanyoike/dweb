@@ -5,6 +5,7 @@ import { IdentitySessions } from "./IdentitySessions";
 import { grant } from "./fixtures.test-support";
 
 afterEach(cleanup);
+
 it("labels an identity and keeps old sessions authorised and individually revocable", async () => {
   const session = grant("old");
   const revoke = vi.fn();

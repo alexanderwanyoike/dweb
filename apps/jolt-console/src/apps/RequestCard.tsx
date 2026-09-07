@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { AppSessionGrant } from "../daemon/types";
+import type { AppSessionGrant } from "./model";
 import { isGrantableCapability } from "./capabilities";
 import { PermissionList } from "./PermissionList";
+
 export function RequestCard({
   request,
   identity,

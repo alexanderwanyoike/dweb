@@ -1,4 +1,5 @@
-import type { AppSessionGrant } from "../daemon/types";
+import type { AppSessionGrant } from "./model";
+
 export function grant(
   id: string,
   overrides: Partial<AppSessionGrant> = {},

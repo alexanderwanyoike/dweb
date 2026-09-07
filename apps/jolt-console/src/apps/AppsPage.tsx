@@ -1,23 +1,26 @@
 import { useMemo, useState } from "react";
-import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
-import type { AppSessionGrant } from "../daemon/types";
-import { groupApplications, compareGrantRecency } from "../apps/model";
-import { usePermissions } from "../apps/usePermissions";
-import { RequestCard } from "../apps/RequestCard";
-import { AppCard } from "../apps/AppCard";
-import { RevokeDialog } from "../apps/RevokeDialog";
-import "../apps/apps.css";
+import { tauriAppAccessGateway, type AppAccessGateway } from "./gateway";
+import type { AppSessionGrant } from "./model";
+import { groupApplications, compareGrantRecency } from "./model";
+import { useAppAccess } from "./use-app-access";
+import { RequestCard } from "./RequestCard";
+import { AppCard } from "./AppCard";
+import { RevokeDialog } from "./RevokeDialog";
+import "./apps.css";
+
 export function AppsPage({
-  client = tauriDaemonClient,
+  gateway = tauriAppAccessGateway,
   refreshIntervalMs = 5000,
 }: {
-  client?: DaemonClient;
+  gateway?: AppAccessGateway;
   refreshIntervalMs?: number;
 }) {
-  const { resource, data, busy, loading, refreshing, error } = usePermissions(
-    client,
+  const { state, refresh, approve, reject, revoke } = useAppAccess(
+    gateway,
     refreshIntervalMs,
   );
+  const { data, busy, loading, refreshing, error } = state;
+  const accessChangesDisabled = busy || refreshing || Boolean(error);
   const [selection, setSelection] = useState<{
     name: string;
     sessions: AppSessionGrant[];
@@ -34,9 +37,9 @@ export function AppsPage({
       key={request.request_id}
       request={request}
       identity={data.localIdentities.active_identity ?? null}
-      busy={busy || refreshing || Boolean(error)}
-      onApprove={() => resource.approve(request)}
-      onReject={() => resource.reject(request)}
+      busy={accessChangesDisabled}
+      onApprove={() => approve(request)}
+      onReject={() => reject(request)}
     />
   );
   return (
@@ -55,7 +58,7 @@ export function AppsPage({
           </h2>
           <button
             disabled={refreshing || busy}
-            onClick={() => void resource.refresh()}
+            onClick={() => void refresh()}
             aria-label="Refresh app access"
           >
             Refresh
@@ -82,7 +85,7 @@ export function AppsPage({
               key={app.id}
               app={app}
               identities={data.localIdentities}
-              busy={busy || refreshing || Boolean(error)}
+              busy={accessChangesDisabled}
               onRevoke={(name, sessions) => setSelection({ name, sessions })}
             />
           ))}
@@ -101,7 +104,7 @@ export function AppsPage({
       {selection && (
         <RevokeDialog
           {...selection}
-          revoke={resource.revoke}
+          revoke={revoke}
           onClose={() => setSelection(null)}
         />
       )}

@@ -1,12 +1,7 @@
-import type { AppSessionGrant } from "../daemon/types";
+import type { AppSessionGrant } from "./model";
 import { PermissionList } from "./PermissionList";
-export function timeLabel(seconds?: number | null) {
-  if (!seconds) return "Never used";
-  return new Date(seconds * 1000).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+import { sessionTimeLabel } from "./format";
+
 export function SessionDetails({
   session,
   busy,
@@ -24,11 +19,13 @@ export function SessionDetails({
       </summary>
       <div className="access-session-body">
         <p className="access-muted">
-          Last used: {timeLabel(session.last_used_at)}
+          Last used: {sessionTimeLabel(session.last_used_at)}
           <br />
-          Created: {timeLabel(session.created_at)}
+          Created: {sessionTimeLabel(session.created_at)}
         </p>
-        {session.expires_at && <p>Expires {timeLabel(session.expires_at)}</p>}
+        {session.expires_at && (
+          <p>Expires {sessionTimeLabel(session.expires_at)}</p>
+        )}
         <p className="mono">Session {session.session_id || "not reported"}</p>
         <PermissionList grants={session.granted_capabilities} />
         {session.status === "active" && (

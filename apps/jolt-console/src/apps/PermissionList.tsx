@@ -1,4 +1,5 @@
 import { capabilityInfo } from "./capabilities";
+
 export function PermissionList({ grants }: { grants: string[] }) {
   return (
     <ul className="access-permissions">

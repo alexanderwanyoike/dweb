@@ -1,7 +1,9 @@
 import { expect, it, vi } from "vitest";
-import { PermissionsResource } from "./resource";
+import { AppAccessController } from "./app-access-controller";
+import { createAppAccessGateway } from "./gateway";
 import { grant } from "./fixtures.test-support";
 import type { DaemonClient } from "../daemon/client";
+
 function client() {
   return {
     daemonUrl: "",
@@ -14,37 +16,41 @@ function client() {
     post: vi.fn(async () => ({})),
   } as unknown as DaemonClient;
 }
+
 it("coalesces refreshes and retains the last known permissions on failure", async () => {
   const api = client();
-  const resource = new PermissionsResource(api, 0);
-  await Promise.all([resource.refresh(), resource.refresh()]);
+  const controller = new AppAccessController(createAppAccessGateway(api), 0);
+  await Promise.all([controller.refresh(), controller.refresh()]);
   expect(api.get).toHaveBeenCalledTimes(3);
   vi.mocked(api.get).mockRejectedValue(new Error("Offline"));
-  await resource.refresh();
-  expect(resource.getSnapshot().data.sessions).toHaveLength(1);
-  expect(resource.getSnapshot().error).toBe("Offline");
+  await controller.refresh();
+  expect(controller.getSnapshot().data.sessions).toHaveLength(1);
+  expect(controller.getSnapshot().error).toBe("Offline");
 });
-it("ignores old responses after the resource stops", async () => {
+
+it("ignores old responses after the controller stops", async () => {
   const api = client();
-  const resource = new PermissionsResource(api, 0);
-  const pending = resource.refresh();
-  resource.stop();
+  const controller = new AppAccessController(createAppAccessGateway(api), 0);
+  const pending = controller.refresh();
+  controller.stop();
   await pending;
-  expect(resource.getSnapshot().data.sessions).toHaveLength(0);
+  expect(controller.getSnapshot().data.sessions).toHaveLength(0);
 });
+
 it("keeps a confirmed revocation visible when the following refresh fails", async () => {
   const api = client();
-  const resource = new PermissionsResource(api, 0);
-  await resource.refresh();
+  const controller = new AppAccessController(createAppAccessGateway(api), 0);
+  await controller.refresh();
   vi.mocked(api.get).mockRejectedValue(new Error("Offline"));
-  const result = await resource.revoke([grant("one")]);
+  const result = await controller.revoke([grant("one")]);
   expect(result.succeeded).toHaveLength(1);
-  expect(resource.getSnapshot().data.sessions[0].status).toBe("revoked");
+  expect(controller.getSnapshot().data.sessions[0].status).toBe("revoked");
 });
+
 it("does not publish a completed mutation after the page closes", async () => {
   const api = client();
-  const resource = new PermissionsResource(api, 0);
-  await resource.refresh();
+  const controller = new AppAccessController(createAppAccessGateway(api), 0);
+  await controller.refresh();
   let complete!: (value: unknown) => void;
   vi.mocked(api.post).mockImplementation(
     () =>
@@ -52,11 +58,11 @@ it("does not publish a completed mutation after the page closes", async () => {
         complete = resolve;
       }),
   );
-  const pending = resource.revoke([grant("one")]);
+  const pending = controller.revoke([grant("one")]);
   await Promise.resolve();
-  resource.stop();
-  const closed = resource.getSnapshot();
+  controller.stop();
+  const closed = controller.getSnapshot();
   complete({});
   await pending;
-  expect(resource.getSnapshot()).toBe(closed);
+  expect(controller.getSnapshot()).toBe(closed);
 });

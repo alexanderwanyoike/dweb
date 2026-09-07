@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
 import { groupApplications, identityGroups, olderSession } from "./model";
 import { grant } from "./fixtures.test-support";
+
 it("groups by app id across identities and origins, never by the reported name", () => {
   const groups = groupApplications([
     grant("one"),
@@ -14,6 +15,7 @@ it("groups by app id across identities and origins, never by the reported name",
   expect(spoke.history).toHaveLength(1);
   expect(identityGroups(spoke.active)).toHaveLength(2);
 });
+
 it("keeps older authorised sessions in the active group", () => {
   const old = grant("old");
   expect(olderSession(old, 10_000_000)).toBe(true);

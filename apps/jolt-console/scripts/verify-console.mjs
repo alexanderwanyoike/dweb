@@ -12,7 +12,7 @@ const files = {
   shell: readFileSync(join(root, "src/components/ConsoleShell.tsx"), "utf8"),
   navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
-  appCommands: readFileSync(join(root, "src/apps/commands.ts"), "utf8"),
+  appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
   settingsPage: readFileSync(join(root, "src/sections/SettingsPage.tsx"), "utf8"),
   updateClient: readFileSync(join(root, "src/update/client.ts"), "utf8"),
   styles: readFileSync(join(root, "src/styles.css"), "utf8"),
@@ -54,7 +54,7 @@ if (!files.main.includes("createRoot") || !files.packageJson.includes("react-rou
   throw new Error("Console must be wired as a React app");
 }
 
-if (!files.appCommands.includes("/admin/v1/app-requests") || !files.appCommands.includes("/admin/v1/app-access/sessions")) {
+if (!files.appGateway.includes("/admin/v1/app-requests") || !files.appGateway.includes("/admin/v1/app-access/sessions")) {
   throw new Error("Apps section must reserve the app permission API surface");
 }
 

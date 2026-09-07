@@ -7,7 +7,6 @@ import {
   deleteLocalIdentity,
   exportIdentity,
   importIdentity,
-  loadAppPermissions,
   loadDaemonPayload,
   loadNetworkSettings,
   removeBootstrapRelay,
@@ -198,12 +197,10 @@ describe("local identity helpers", () => {
           active: false,
         })
         .mockResolvedValueOnce(identities),
-      delete: vi
-        .fn()
-        .mockResolvedValueOnce({
-          active_identity: "alice.jolt",
-          identities: [],
-        }),
+      delete: vi.fn().mockResolvedValueOnce({
+        active_identity: "alice.jolt",
+        identities: [],
+      }),
     };
 
     await expect(createLocalIdentity(client, "Work")).resolves.toEqual({
@@ -299,38 +296,6 @@ describe("identity recovery helpers", () => {
         as_local_identity: false,
       },
     );
-  });
-});
-
-describe("loadAppPermissions", () => {
-  it("loads pending requests and sessions from the admin permission endpoints", async () => {
-    const client: DaemonClient = {
-      daemonUrl: "http://127.0.0.1:9862",
-      get: vi.fn(async (path: string) => {
-        if (path === "/admin/v1/app-access/requests") return [{ request_id: "req_1" }];
-        if (path === "/admin/v1/app-access/sessions")
-          return [{ session_id: "sess_1" }];
-        if (path === "/admin/v1/identities") {
-          return {
-            active_identity: "alice.jolt",
-            identities: [
-              { address: "alice.jolt", label: "Default", active: true },
-            ],
-          };
-        }
-        throw new Error(path);
-      }),
-      post: vi.fn(),
-    };
-
-    await expect(loadAppPermissions(client)).resolves.toEqual({
-      requests: [{ request_id: "req_1" }],
-      sessions: [{ session_id: "sess_1" }],
-      localIdentities: {
-        active_identity: "alice.jolt",
-        identities: [{ address: "alice.jolt", label: "Default", active: true }],
-      },
-    });
   });
 });
 

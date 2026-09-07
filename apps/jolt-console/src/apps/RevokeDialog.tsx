@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import type { AppSessionGrant } from "../daemon/types";
-import type { RevocationResult } from "./commands";
-import { identityFor } from "./model";
+import { identityFor, type AppSessionGrant, type RevocationResult } from "./model";
 import { PermissionList } from "./PermissionList";
+
 export function RevokeDialog({
   name,
   sessions,

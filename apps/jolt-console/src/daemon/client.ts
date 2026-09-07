@@ -1,7 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
 import type {
-  AppPermissionsPayload,
-  AppSessionGrant,
   CacheEntry,
   CacheStats,
   DaemonPayload,
@@ -148,18 +146,6 @@ export async function importIdentity(
     allow_overwrite: allowOverwrite,
     as_local_identity: asLocalIdentity,
   });
-}
-
-export async function loadAppPermissions(
-  client: DaemonClient,
-): Promise<AppPermissionsPayload> {
-  const [requests, sessions, localIdentities] = await Promise.all([
-    client.get<AppSessionGrant[]>("/admin/v1/app-access/requests"),
-    client.get<AppSessionGrant[]>("/admin/v1/app-access/sessions"),
-    client.get<LocalIdentitiesPayload>("/admin/v1/identities"),
-  ]);
-
-  return { requests, sessions, localIdentities };
 }
 
 function filterPublishedForActiveIdentity(

@@ -30,6 +30,7 @@ const scoped: [string, string, CapabilityInfo["kind"]][] = [
   ],
   ["enumerate:any:", "enumerate public records for any identity under", "read"],
 ];
+
 export function capabilityInfo(code: string): CapabilityInfo {
   const base = {
     code,
@@ -62,6 +63,7 @@ export function capabilityInfo(code: string): CapabilityInfo {
     broadPath: isBroadPathScope(scope),
   };
 }
+
 export function isGrantableCapability(code: string) {
   return capabilityInfo(code).grantable;
 }
