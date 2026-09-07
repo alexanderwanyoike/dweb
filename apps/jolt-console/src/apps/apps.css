@@ -4,35 +4,12 @@
   margin: 0 auto;
   padding-bottom: 24px;
 }
-.apps-intro,
 .access-app-heading,
 .access-request-heading,
 .access-detail-heading {
   display: flex;
   align-items: center;
   gap: 16px;
-}
-.apps-intro {
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 28px;
-}
-.apps-intro h2 {
-  font-size: 25px;
-  letter-spacing: -0.8px;
-  margin: 5px 0 8px;
-  font-weight: 600;
-}
-.apps-intro p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.55;
-  font-size: 13px;
-}
-.apps-intro .eyebrow {
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: var(--faint);
 }
 .apps-page button {
   padding: 8px 14px;
@@ -308,4 +285,15 @@
 .access-dialog button {
   min-height: 40px;
   padding: 8px 16px;
+}
+
+.access-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.access-section-heading .access-section-label {
+  margin: 0;
 }

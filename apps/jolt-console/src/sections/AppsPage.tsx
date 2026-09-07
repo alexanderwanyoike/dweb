@@ -41,23 +41,6 @@ export function AppsPage({
   );
   return (
     <section className="apps-page" aria-label="App access">
-      <header className="apps-intro">
-        <div>
-          <p className="eyebrow">YOU'RE IN CONTROL</p>
-          <h2>Your apps, your permission.</h2>
-          <p>
-            See which apps can use your Jolt identity. Review or remove their
-            access here.
-          </p>
-        </div>
-        <button
-          disabled={refreshing || busy}
-          onClick={() => void resource.refresh()}
-          aria-label="Refresh app access"
-        >
-          Refresh
-        </button>
-      </header>
       {error && (
         <div role="alert" className="access-error">
           Could not update app access: {error}. Refresh before making another
@@ -66,18 +49,27 @@ export function AppsPage({
       )}
       {loading && <p role="status">Loading app access…</p>}
       <section className="apps-requests" aria-label="Requests">
-        <h3 className="access-section-label">
-          Requests <span>{pending.length}</span>
-        </h3>
+        <div className="access-section-heading">
+          <h2 className="access-section-label">
+            Access requests <span>{pending.length}</span>
+          </h2>
+          <button
+            disabled={refreshing || busy}
+            onClick={() => void resource.refresh()}
+            aria-label="Refresh app access"
+          >
+            Refresh
+          </button>
+        </div>
         {pending.length === 0 && !loading && !error && (
           <p className="access-muted">No app requests yet.</p>
         )}
         {pending.map(renderRequest)}
       </section>
       <section aria-label="Applications">
-        <h3 className="access-section-label">
-          Applications <span>{apps.length}</span>
-        </h3>
+        <h2 className="access-section-label">
+          Existing access <span>{apps.length}</span>
+        </h2>
         {!loading && !error && apps.length === 0 && (
           <div className="access-empty">
             <h3>A place for your apps.</h3>

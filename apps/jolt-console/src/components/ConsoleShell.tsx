@@ -15,11 +15,12 @@ export function ConsoleShell({
   children,
   snapshot,
   consoleVersion,
-  updateCheck = null
+  updateCheck = null,
 }: ConsoleShellProps) {
   const location = useLocation();
   const currentRoute =
-    consoleRoutes.find((route) => route.path === location.pathname) ?? consoleRoutes[0];
+    consoleRoutes.find((route) => route.path === location.pathname) ??
+    consoleRoutes[0];
   const daemonVersion = snapshot.status?.daemon_version ?? "unknown";
 
   return (
@@ -58,8 +59,12 @@ export function ConsoleShell({
       <main className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">JOLT CONSOLE</p>
             <h1>{currentRoute.label}</h1>
+            {currentRoute.id === "apps" && (
+              <p className="page-description">
+                Choose what can act with your identity.
+              </p>
+            )}
           </div>
           <div className="topbar-actions">
             <ThemeToggle />
@@ -68,12 +73,16 @@ export function ConsoleShell({
                 Update {updateCheck.version}
               </NavLink>
             ) : null}
-            <span className={`status-pill ${snapshot.connected ? "ok" : "pending"}`}>
+            <span
+              className={`status-pill ${snapshot.connected ? "ok" : "pending"}`}
+            >
               {snapshot.connected ? "connected" : "offline"}
             </span>
-            <button type="button" onClick={() => void snapshot.refresh()}>
-              Refresh
-            </button>
+            {currentRoute.id !== "apps" && (
+              <button type="button" onClick={() => void snapshot.refresh()}>
+                Refresh
+              </button>
+            )}
           </div>
         </header>
 

@@ -13,12 +13,12 @@
   --red: #ad3838;
   --cyan: #466800;
   --ink: #15191e;
-  --accent: #d9f76b;
-  --accent-text: #486019;
-  --accent-ink: #253108;
-  --accent-soft: #edf3dc;
-  --request-bg: #fffaf0;
-  --request-border: #ecddb5;
+  --accent: #172126;
+  --accent-text: #172126;
+  --accent-ink: #ffffff;
+  --accent-soft: #e9edf0;
+  --request-bg: #ffffff;
+  --request-border: #a4adb5;
   font-family: "Aptos", "Segoe UI", system-ui, sans-serif;
 }
 :root[data-theme="dark"] {
@@ -35,10 +35,12 @@
   --amber: #e7bf76;
   --red: #f49a91;
   --cyan: #d9f76b;
-  --accent-text: #d8efa1;
-  --accent-soft: #303925;
-  --request-bg: #29271e;
-  --request-border: #554a2e;
+  --accent: #d9ff43;
+  --accent-ink: #172126;
+  --accent-text: #d9ff43;
+  --accent-soft: #293235;
+  --request-bg: #1c2025;
+  --request-border: #77858b;
 }
 
 * {
@@ -751,7 +753,6 @@ body {
 .section-nav a.active {
   color: var(--text);
   background: var(--accent-soft);
-  box-shadow: inset 2px 0 0 var(--accent-text);
   font-weight: 600;
 }
 .section-nav a:hover {
@@ -860,4 +861,10 @@ summary:focus-visible {
   display: flex;
   gap: 6px;
   align-items: center;
+}
+
+.page-description {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 13px;
 }
