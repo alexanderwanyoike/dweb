@@ -23,7 +23,7 @@ it("shows actual logs and lets the user review exact support details", async () 
     stop: vi.fn(),
     restart: vi.fn(),
   } as DaemonLifecycleClient;
-  render(
+  const view = render(
     <DiagnosticsPage snapshot={snapshot()} lifecycleClient={lifecycleClient} />,
   );
   expect(await screen.findByText("A real test log line")).toBeVisible();
@@ -35,4 +35,16 @@ it("shows actual logs and lets the user review exact support details", async () 
   expect(screen.getByRole("dialog")).toHaveTextContent(
     "Nothing is sent automatically",
   );
+  view.rerender(
+    <MemoryRouter>
+      <DiagnosticsPage
+        snapshot={snapshot({ status: { peer_id: "changed-after-review" } })}
+        lifecycleClient={lifecycleClient}
+      />
+    </MemoryRouter>,
+  );
+  expect(screen.getByRole("dialog")).not.toHaveTextContent(
+    "changed-after-review",
+  );
+  expect(screen.getByRole("dialog")).toHaveTextContent("12D3KooAlice");
 });

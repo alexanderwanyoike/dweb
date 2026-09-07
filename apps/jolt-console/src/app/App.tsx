@@ -1,5 +1,7 @@
+import { useConsoleStartup } from "./use-console-startup";
+import { useConsoleUpdates } from "../update/use-console-updates";
 import { AdvancedPage } from "../advanced";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ConsoleShell } from "../components/ConsoleShell";
 import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
@@ -16,10 +18,9 @@ import { NetworkPage } from "../network";
 import { HomePage } from "../home";
 import { PublishedPage } from "../published";
 import { RelaysPage } from "../relays";
-import { SettingsPage } from "../sections/SettingsPage";
+import { SettingsPage } from "../settings";
 import {
   tauriConsoleUpdateClient,
-  type ConsoleUpdateCheck,
   type ConsoleUpdateClient,
 } from "../update/client";
 import { CONSOLE_VERSION } from "../version";
@@ -41,60 +42,15 @@ export function ConsoleApp({
 }: ConsoleAppProps) {
   const snapshot = useDaemonSnapshot(client, refreshIntervalMs);
   const appAccess = useMemo(() => createAppAccessGateway(client), [client]);
-  const [updateCheck, setUpdateCheck] = useState<ConsoleUpdateCheck | null>(
-    null,
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const lifecycle = await lifecycleClient.status();
-        if (
-          lifecycle.reachability !== "unavailable" ||
-          lifecycle.ownership !== "none"
-        ) {
-          return;
-        }
-
-        await lifecycleClient.start();
-        if (!cancelled) {
-          await refreshSnapshotUntilConnected(snapshot.refresh);
-        }
-      } catch {
-        // Snapshot polling and Settings lifecycle controls surface daemon failures.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [lifecycleClient, snapshot.refresh]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const nextUpdateCheck = await updateClient.check();
-        if (!cancelled) setUpdateCheck(nextUpdateCheck);
-      } catch {
-        // Settings exposes manual update checks and any updater errors.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [updateClient]);
+  useConsoleStartup(lifecycleClient, snapshot.refresh);
+  const updates = useConsoleUpdates(updateClient, lifecycleClient);
 
   return (
     <HashRouter>
       <ConsoleShell
         snapshot={snapshot}
         consoleVersion={consoleVersion}
-        updateCheck={updateCheck}
+        updateCheck={updates.check}
       >
         <Routes>
           <Route index element={<HomePage snapshot={snapshot} />} />
@@ -126,8 +82,8 @@ export function ConsoleApp({
             element={
               <SettingsPage
                 lifecycleClient={lifecycleClient}
-                daemonClient={client}
-                updateClient={updateClient}
+                updates={updates}
+                onNodeChanged={snapshot.refresh}
               />
             }
           />
@@ -146,15 +102,4 @@ export function ConsoleApp({
       </ConsoleShell>
     </HashRouter>
   );
-}
-
-async function refreshSnapshotUntilConnected(refresh: () => Promise<boolean>) {
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    if (await refresh()) return;
-    await delay(500);
-  }
-}
-
-function delay(ms: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

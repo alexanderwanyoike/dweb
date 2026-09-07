@@ -20,7 +20,7 @@ export function DiagnosticsPage({
 }) {
   const [lifecycle, setLifecycle] = useState<DaemonLifecycleState | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [review, setReview] = useState(false);
+  const [review, setReview] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     let active = true;
@@ -51,7 +51,7 @@ export function DiagnosticsPage({
   );
   async function copy() {
     try {
-      await navigator.clipboard.writeText(details);
+      await navigator.clipboard.writeText(review ?? "");
       setCopied(true);
     } catch (cause) {
       setError(errorMessage(cause));
@@ -109,19 +109,19 @@ export function DiagnosticsPage({
         <button
           onClick={() => {
             setCopied(false);
-            setReview(true);
+            setReview(details);
           }}
         >
           Prepare support details
         </button>
       </div>
       {review && (
-        <Dialog title="Review support details" onClose={() => setReview(false)}>
+        <Dialog title="Review support details" onClose={() => setReview(null)}>
           <p>
             This excerpt includes node identifiers, addresses and available
             logs. Review it before copying. Nothing is sent automatically.
           </p>
-          <pre className="diagnostics-output">{details}</pre>
+          <pre className="diagnostics-output">{review}</pre>
           <button onClick={() => void copy()}>Copy details</button>
           {copied && <p role="status">Copied support details.</p>}
           {error && <p role="alert">{error}</p>}

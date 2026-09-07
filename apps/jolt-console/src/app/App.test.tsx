@@ -79,7 +79,11 @@ describe("ConsoleApp", () => {
       screen.getByRole("link", { name: "Open published content" }),
     );
     expect(await screen.findByText("/demo/post")).toBeInTheDocument();
-    expect(within(screen.getByLabelText("Jolt Console sections")).getByRole("link", {name:"Advanced"})).toHaveClass("active");
+    expect(
+      within(screen.getByLabelText("Jolt Console sections")).getByRole("link", {
+        name: "Advanced",
+      }),
+    ).toHaveClass("active");
 
     await userEvent.click(
       screen.getByRole("link", { name: "Diagnostics", exact: true }),
@@ -246,6 +250,8 @@ describe("ConsoleApp", () => {
     expect(
       await screen.findByRole("link", { name: "Update 0.2.0" }),
     ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("link", { name: "Update 0.2.0" }));
+    expect(await screen.findByText("Update available")).toBeVisible();
     expect(updateClient.check).toHaveBeenCalledOnce();
   });
 

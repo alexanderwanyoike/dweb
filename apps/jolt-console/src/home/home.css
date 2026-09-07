@@ -1,0 +1,36 @@
+.home-health a {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-underline-offset: 4px;
+}
+.home-health {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 26px;
+}
+.home-health h2 {
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  margin: 12px 0;
+}
+.home-health p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.home-health-facts {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  margin-top: 24px;
+  font-size: 13px;
+}
+.home-health-facts strong {
+  margin-left: 8px;
+}
+.home-health-facts a {
+  margin-left: auto;
+}

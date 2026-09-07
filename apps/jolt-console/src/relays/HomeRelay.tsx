@@ -2,10 +2,10 @@ import { useState } from "react";
 import { TaskSection } from "../components/TaskSection";
 import type { RelaySettings } from "./use-relay-settings";
 export function HomeRelay({ access }: { access: RelaySettings }) {
-  const [address, setAddress] = useState("");
-  const [apiUrl, setApiUrl] = useState("");
-  const [capability, setCapability] = useState("pinning");
   const relay = access.settings?.home_relay;
+  const [address, setAddress] = useState(relay?.multiaddr ?? "");
+  const [apiUrl, setApiUrl] = useState(relay?.api_url ?? "");
+  const [capability, setCapability] = useState(relay?.capability ?? "pinning");
   return (
     <TaskSection title="Home relay">
       {relay ? (
