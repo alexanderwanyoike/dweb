@@ -1,6 +1,7 @@
+import {advancedRoutes} from "../advanced";
 import { ThemeToggle } from "./ThemeToggle";
 import { NavLink, useLocation } from "react-router-dom";
-import { consoleRoutes } from "../app/navigation";
+import { consoleRoutes, primaryRoutes } from "../app/navigation";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
 import type { ConsoleUpdateCheck } from "../update/client";
 
@@ -21,6 +22,7 @@ export function ConsoleShell({
   const currentRoute =
     consoleRoutes.find((route) => route.path === location.pathname) ??
     consoleRoutes[0];
+  const advancedActive = advancedRoutes.some(route=>route.path===location.pathname);
   const daemonVersion = snapshot.status?.daemon_version ?? "unknown";
 
   return (
@@ -38,8 +40,9 @@ export function ConsoleShell({
         </div>
 
         <nav className="section-nav">
-          {consoleRoutes.map((route) => (
-            <NavLink key={route.id} to={route.path} end={route.path === "/"}>
+          {primaryRoutes.map((route) => (
+            <NavLink key={route.id} to={route.path} end={route.path === "/"}
+              className={({isActive})=>isActive || (route.id==="advanced" && advancedActive) ? "active" : ""}>
               {route.label}
             </NavLink>
           ))}
@@ -60,11 +63,7 @@ export function ConsoleShell({
         <header className="topbar">
           <div>
             <h1>{currentRoute.label}</h1>
-            {currentRoute.id === "apps" && (
-              <p className="page-description">
-                Choose what can act with your identity.
-              </p>
-            )}
+            <p className="page-description">{currentRoute.description}</p>
           </div>
           <div className="topbar-actions">
             <ThemeToggle />
@@ -78,7 +77,9 @@ export function ConsoleShell({
             >
               {snapshot.connected ? "connected" : "offline"}
             </span>
-            {currentRoute.id !== "apps" && (
+            {!["apps", "relays", "settings", "advanced"].includes(
+              currentRoute.id,
+            ) && (
               <button type="button" onClick={() => void snapshot.refresh()}>
                 Refresh
               </button>

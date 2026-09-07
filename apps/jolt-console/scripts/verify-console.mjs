@@ -10,7 +10,7 @@ const files = {
   main: readFileSync(join(root, "src/main.tsx"), "utf8"),
   app: readFileSync(join(root, "src/app/App.tsx"), "utf8"),
   shell: readFileSync(join(root, "src/components/ConsoleShell.tsx"), "utf8"),
-  navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8"),
+  navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8") + readFileSync(join(root, "src/advanced/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
   appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
   settingsPage: readFileSync(join(root, "src/sections/SettingsPage.tsx"), "utf8"),
@@ -29,7 +29,7 @@ const requiredSections = [
   "Network",
   "Relays",
   "Published",
-  "Cache",
+  "Storage",
   "Settings",
   "Diagnostics"
 ];
