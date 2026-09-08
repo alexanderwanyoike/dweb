@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { DaemonClient } from "../daemon/client";
@@ -68,10 +68,16 @@ describe("ConsoleApp", () => {
     await userEvent.click(screen.getByRole("link", { name: "Identity" }));
     expect(await screen.findAllByText("alice.jolt")).not.toHaveLength(0);
 
-    await userEvent.click(screen.getByRole("link", { name: "Published" }));
+    await userEvent.click(screen.getByRole("link", { name: "Advanced" }));
+    await userEvent.click(screen.getByRole("link", { name: "Published content" }));
     expect(await screen.findByText("/demo/post")).toBeInTheDocument();
+    expect(
+      within(screen.getByLabelText("Jolt Console sections")).getByRole("link", {
+        name: "Advanced"
+      })
+    ).toHaveClass("active");
 
-    await userEvent.click(screen.getByRole("link", { name: "Diagnostics" }));
+    await userEvent.click(screen.getByRole("link", { name: "Diagnostics", exact: true }));
     expect(await screen.findByText(/12D3KooAlice/)).toBeInTheDocument();
   });
 
@@ -103,7 +109,11 @@ describe("ConsoleApp", () => {
     };
 
     render(
-      <ConsoleApp client={client} lifecycleClient={healthyLifecycleClient()} refreshIntervalMs={1000} />
+      <ConsoleApp
+        client={client}
+        lifecycleClient={healthyLifecycleClient()}
+        refreshIntervalMs={1000}
+      />
     );
 
     await act(async () => {});
@@ -134,7 +144,11 @@ describe("ConsoleApp", () => {
     };
 
     render(
-      <ConsoleApp client={client} lifecycleClient={healthyLifecycleClient()} refreshIntervalMs={1000} />
+      <ConsoleApp
+        client={client}
+        lifecycleClient={healthyLifecycleClient()}
+        refreshIntervalMs={1000}
+      />
     );
 
     await act(async () => {});
@@ -218,6 +232,8 @@ describe("ConsoleApp", () => {
     );
 
     expect(await screen.findByRole("link", { name: "Update 0.2.0" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("link", { name: "Update 0.2.0" }));
+    expect(await screen.findByText("Update available")).toBeVisible();
     expect(updateClient.check).toHaveBeenCalledOnce();
   });
 
@@ -232,7 +248,7 @@ describe("ConsoleApp", () => {
     );
 
     expect(await screen.findByText("Console v9.8.7")).toBeInTheDocument();
-    expect(await screen.findByText("Daemon v8.7.6")).toBeInTheDocument();
+    expect(await screen.findByText("Node v8.7.6")).toBeInTheDocument();
   });
 });
 

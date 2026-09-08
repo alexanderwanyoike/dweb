@@ -1,6 +1,6 @@
 {
   "name": "@jolt/console",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,9 +9,11 @@
     "package:linux": "../../scripts/package-jolt-console.sh",
     "preview": "vite preview --host 127.0.0.1 --port 1421",
     "build:jolt-sidecar": "bash scripts/stage-dev-sidecar.sh",
-    "tauri": "npm run build:jolt-sidecar && tauri",
+    "tauri": "yarn build:jolt-sidecar && tauri",
     "test": "vitest run && node scripts/verify-console.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "format": "prettier --write --ignore-unknown src scripts index.html vite.config.ts package.json README.md src-tauri/tauri.conf.json src-tauri/capabilities .prettierrc.json",
+    "format:check": "prettier --check --ignore-unknown src scripts index.html vite.config.ts package.json README.md src-tauri/tauri.conf.json src-tauri/capabilities .prettierrc.json"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.0",
@@ -30,6 +32,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.2.0",
     "jsdom": "^29.1.1",
+    "prettier": "3.9.6",
     "typescript": "^5.9.3",
     "vite": "^7.2.4",
     "vitest": "^4.1.8"

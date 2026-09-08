@@ -1,0 +1,32 @@
+.home-node-line {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--line);
+}
+.home-node-line > .node-status {
+  min-width: 104px;
+  font-weight: 600;
+}
+.home-node-facts {
+  display: flex;
+  gap: 28px;
+  margin: 0;
+  font-size: 12px;
+}
+.home-node-facts > div {
+  display: flex;
+  gap: 8px;
+}
+.home-node-facts dt {
+  color: var(--muted);
+}
+.home-node-facts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.home-value {
+  font-size: 12px;
+  color: var(--muted);
+}

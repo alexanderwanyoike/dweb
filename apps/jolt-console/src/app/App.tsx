@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
+import { useConsoleStartup } from "./use-console-startup";
+import { useConsoleUpdates } from "../update/use-console-updates";
+import { AdvancedPage } from "../advanced";
+import { useMemo } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ConsoleShell } from "../components/ConsoleShell";
 import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
-import {
-  tauriDaemonLifecycleClient,
-  type DaemonLifecycleClient
-} from "../daemon/lifecycle";
+import { tauriDaemonLifecycleClient, type DaemonLifecycleClient } from "../daemon/lifecycle";
 import { useDaemonSnapshot } from "../daemon/useDaemonSnapshot";
-import { AppsPage } from "../sections/AppsPage";
-import { CachePage } from "../sections/CachePage";
-import { DiagnosticsPage } from "../sections/DiagnosticsPage";
-import { IdentityPage } from "../sections/IdentityPage";
-import { NetworkPage } from "../sections/NetworkPage";
-import { OverviewPage } from "../sections/OverviewPage";
-import { PublishedPage } from "../sections/PublishedPage";
-import { RelaysPage } from "../sections/RelaysPage";
-import { SettingsPage } from "../sections/SettingsPage";
-import {
-  tauriConsoleUpdateClient,
-  type ConsoleUpdateCheck,
-  type ConsoleUpdateClient
-} from "../update/client";
+import { AppsPage, createAppAccessGateway } from "../apps";
+import { StoragePage } from "../storage";
+import { DiagnosticsPage } from "../diagnostics";
+import { IdentityPage } from "../identity";
+import { NetworkPage } from "../network";
+import { HomePage } from "../home";
+import { PublishedPage } from "../published";
+import { RelaysPage } from "../relays";
+import { SettingsPage } from "../settings";
+import { tauriConsoleUpdateClient, type ConsoleUpdateClient } from "../update/client";
 import { CONSOLE_VERSION } from "../version";
 
 type ConsoleAppProps = {
@@ -39,92 +35,42 @@ export function ConsoleApp({
   refreshIntervalMs = 5000
 }: ConsoleAppProps) {
   const snapshot = useDaemonSnapshot(client, refreshIntervalMs);
-  const [updateCheck, setUpdateCheck] = useState<ConsoleUpdateCheck | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const lifecycle = await lifecycleClient.status();
-        if (lifecycle.reachability !== "unavailable" || lifecycle.ownership !== "none") {
-          return;
-        }
-
-        await lifecycleClient.start();
-        if (!cancelled) {
-          await refreshSnapshotUntilConnected(snapshot.refresh);
-        }
-      } catch {
-        // Snapshot polling and Settings lifecycle controls surface daemon failures.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [lifecycleClient, snapshot.refresh]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      try {
-        const nextUpdateCheck = await updateClient.check();
-        if (!cancelled) setUpdateCheck(nextUpdateCheck);
-      } catch {
-        // Settings exposes manual update checks and any updater errors.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [updateClient]);
+  const appAccess = useMemo(() => createAppAccessGateway(client), [client]);
+  useConsoleStartup(lifecycleClient, snapshot.refresh);
+  const updates = useConsoleUpdates(updateClient, lifecycleClient);
 
   return (
     <HashRouter>
-      <ConsoleShell
-        snapshot={snapshot}
-        consoleVersion={consoleVersion}
-        updateCheck={updateCheck}
-      >
+      <ConsoleShell snapshot={snapshot} consoleVersion={consoleVersion} updateCheck={updates.check}>
         <Routes>
-          <Route index element={<OverviewPage snapshot={snapshot} />} />
+          <Route index element={<HomePage snapshot={snapshot} />} />
           <Route path="/identity" element={<IdentityPage client={client} snapshot={snapshot} />} />
           <Route
             path="/apps"
-            element={<AppsPage client={client} refreshIntervalMs={refreshIntervalMs} />}
+            element={<AppsPage gateway={appAccess} refreshIntervalMs={refreshIntervalMs} />}
           />
           <Route path="/network" element={<NetworkPage snapshot={snapshot} />} />
-          <Route path="/relays" element={<RelaysPage snapshot={snapshot} />} />
+          <Route path="/relays" element={<RelaysPage client={client} />} />
           <Route path="/published" element={<PublishedPage snapshot={snapshot} />} />
-          <Route path="/cache" element={<CachePage snapshot={snapshot} />} />
+          <Route path="/cache" element={<StoragePage snapshot={snapshot} />} />
           <Route
             path="/settings"
             element={
               <SettingsPage
                 lifecycleClient={lifecycleClient}
-                daemonClient={client}
-                updateClient={updateClient}
+                updates={updates}
+                onNodeChanged={snapshot.refresh}
               />
             }
           />
-          <Route path="/diagnostics" element={<DiagnosticsPage snapshot={snapshot} />} />
+          <Route
+            path="/diagnostics"
+            element={<DiagnosticsPage snapshot={snapshot} lifecycleClient={lifecycleClient} />}
+          />
+          <Route path="/advanced" element={<AdvancedPage lifecycleClient={lifecycleClient} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ConsoleShell>
     </HashRouter>
   );
-}
-
-async function refreshSnapshotUntilConnected(refresh: () => Promise<boolean>) {
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    if (await refresh()) return;
-    await delay(500);
-  }
-}
-
-function delay(ms: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

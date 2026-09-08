@@ -10,10 +10,12 @@ const files = {
   main: readFileSync(join(root, "src/main.tsx"), "utf8"),
   app: readFileSync(join(root, "src/app/App.tsx"), "utf8"),
   shell: readFileSync(join(root, "src/components/ConsoleShell.tsx"), "utf8"),
-  navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8"),
+  navigation:
+    readFileSync(join(root, "src/app/navigation.ts"), "utf8") +
+    readFileSync(join(root, "src/advanced/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
-  appsPage: readFileSync(join(root, "src/sections/AppsPage.tsx"), "utf8"),
-  settingsPage: readFileSync(join(root, "src/sections/SettingsPage.tsx"), "utf8"),
+  appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
+  settingsPage: readFileSync(join(root, "src/settings/UpdateSettings.tsx"), "utf8"),
   updateClient: readFileSync(join(root, "src/update/client.ts"), "utf8"),
   styles: readFileSync(join(root, "src/styles.css"), "utf8"),
   tauriConfig: readFileSync(join(root, "src-tauri/tauri.conf.json"), "utf8"),
@@ -23,13 +25,13 @@ const files = {
 };
 
 const requiredSections = [
-  "Overview",
+  "Home",
   "Identity",
   "Apps",
   "Network",
   "Relays",
   "Published",
-  "Cache",
+  "Storage",
   "Settings",
   "Diagnostics"
 ];
@@ -54,7 +56,10 @@ if (!files.main.includes("createRoot") || !files.packageJson.includes("react-rou
   throw new Error("Console must be wired as a React app");
 }
 
-if (!files.appsPage.includes("/admin/v1/app-requests") || !files.appsPage.includes("/admin/v1/app-sessions")) {
+if (
+  !files.appGateway.includes("/admin/v1/app-requests") ||
+  !files.appGateway.includes("/admin/v1/app-access/sessions")
+) {
   throw new Error("Apps section must reserve the app permission API surface");
 }
 
@@ -65,21 +70,36 @@ for (const marker of ["Jolt Console"]) {
 }
 
 const tauriConfig = JSON.parse(files.tauriConfig);
+const window = tauriConfig.app.windows[0];
+if (
+  window.width !== 1100 ||
+  window.height !== 760 ||
+  window.resizable !== false ||
+  window.maximizable !== false
+) {
+  throw new Error("Console must use its fixed 1100 x 760 native window");
+}
 if (tauriConfig.bundle?.active !== true) {
   throw new Error("Tauri bundle must be enabled for v0 distribution");
 }
 
-if (!Array.isArray(tauriConfig.bundle?.targets) || !tauriConfig.bundle.targets.includes("appimage")) {
+if (
+  !Array.isArray(tauriConfig.bundle?.targets) ||
+  !tauriConfig.bundle.targets.includes("appimage")
+) {
   throw new Error("Tauri bundle must include a Linux AppImage target");
 }
 
-if (!Array.isArray(tauriConfig.bundle?.externalBin) || !tauriConfig.bundle.externalBin.includes("binaries/jolt")) {
+if (
+  !Array.isArray(tauriConfig.bundle?.externalBin) ||
+  !tauriConfig.bundle.externalBin.includes("binaries/jolt")
+) {
   throw new Error("Tauri bundle must declare the jolt daemon sidecar");
 }
 
 if (
   !files.packageJson.includes("build:jolt-sidecar") ||
-  !files.packageJson.includes("npm run build:jolt-sidecar && tauri") ||
+  !files.packageJson.includes("yarn build:jolt-sidecar && tauri") ||
   !files.devSidecarScript.includes("cargo build -p jolt-node --bin jolt") ||
   !files.devSidecarScript.includes("src-tauri/binaries/jolt-$TARGET_TRIPLE")
 ) {
@@ -130,7 +150,7 @@ if (
   throw new Error("Console package metadata must expose the Linux packaging script");
 }
 
-for (const marker of ["console-shell", "sidebar", "section-panel"]) {
+for (const marker of ["console-shell", "sidebar", "workspace-content"]) {
   if (!files.styles.includes(marker)) {
     throw new Error(`Missing layout marker in src/styles.css: ${marker}`);
   }

@@ -1,28 +1,36 @@
-export type ConsoleRouteId =
-  | "overview"
-  | "identity"
-  | "apps"
-  | "network"
-  | "relays"
-  | "published"
-  | "cache"
-  | "settings"
-  | "diagnostics";
-
-export type ConsoleRoute = {
-  id: ConsoleRouteId;
-  label: string;
-  path: string;
-};
-
-export const consoleRoutes: ConsoleRoute[] = [
-  { id: "overview", label: "Overview", path: "/" },
-  { id: "identity", label: "Identity", path: "/identity" },
-  { id: "apps", label: "Apps", path: "/apps" },
-  { id: "network", label: "Network", path: "/network" },
-  { id: "relays", label: "Relays", path: "/relays" },
-  { id: "published", label: "Published", path: "/published" },
-  { id: "cache", label: "Cache", path: "/cache" },
-  { id: "settings", label: "Settings", path: "/settings" },
-  { id: "diagnostics", label: "Diagnostics", path: "/diagnostics" }
+import { advancedRoutes } from "../advanced";
+export const primaryRoutes = [
+  {
+    id: "overview",
+    label: "Home",
+    path: "/",
+    description: "Your local connection, at a glance."
+  },
+  {
+    id: "identity",
+    label: "Identity",
+    path: "/identity",
+    description: "The identities available on this computer."
+  },
+  {
+    id: "apps",
+    label: "Apps",
+    path: "/apps",
+    description: "Choose what can act with your identity."
+  },
+  {
+    id: "network",
+    label: "Network",
+    path: "/network",
+    description: "Connection evidence, with its limits in view."
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    path: "/settings",
+    description: "Preferences and controls for this computer."
+  },
+  advancedRoutes[0]
 ];
+export const consoleRoutes = [...primaryRoutes, ...advancedRoutes.slice(1)];
+export type ConsoleRouteId = (typeof consoleRoutes)[number]["id"];

@@ -1,0 +1,26 @@
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+.metric-card {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.metric-card:first-child {
+  padding-left: 0;
+}
+.metric-card + .metric-card {
+  border-left: 1px solid var(--line);
+}
+.metric-card span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.metric-card strong {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
