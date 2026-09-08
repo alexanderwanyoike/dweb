@@ -1,22 +1,18 @@
-import { describe, expect, it } from "vitest";
-import { consoleRoutes } from "./navigation";
-
-describe("consoleRoutes", () => {
-  it("keeps the v0 console sections addressable", () => {
-    expect(consoleRoutes.map((route) => route.label)).toEqual([
-      "Home",
-      "Identity",
-      "Apps",
-      "Network",
-      "Relays",
-      "Published",
-      "Cache",
-      "Settings",
-      "Diagnostics",
-    ]);
-
-    expect(new Set(consoleRoutes.map((route) => route.path)).size).toBe(
-      consoleRoutes.length,
-    );
-  });
+import { it, expect } from "vitest";
+import { consoleRoutes, primaryRoutes } from "./navigation";
+it("keeps technical destinations addressable under a compact primary navigation", () => {
+  expect(primaryRoutes.map((route) => route.label)).toEqual([
+    "Home",
+    "Identity",
+    "Apps",
+    "Network",
+    "Settings",
+    "Advanced",
+  ]);
+  expect(consoleRoutes.map((route) => route.path)).toEqual(
+    expect.arrayContaining(["/relays", "/published", "/cache", "/diagnostics"]),
+  );
+  expect(new Set(consoleRoutes.map((route) => route.path)).size).toBe(
+    consoleRoutes.length,
+  );
 });

@@ -1,3 +1,4 @@
+import { AdvancedPage } from "../advanced";
 import { useEffect, useMemo, useState } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ConsoleShell } from "../components/ConsoleShell";
@@ -8,13 +9,13 @@ import {
 } from "../daemon/lifecycle";
 import { useDaemonSnapshot } from "../daemon/useDaemonSnapshot";
 import { AppsPage, createAppAccessGateway } from "../apps";
-import { CachePage } from "../sections/CachePage";
-import { DiagnosticsPage } from "../sections/DiagnosticsPage";
+import { StoragePage } from "../storage";
+import { DiagnosticsPage } from "../diagnostics";
 import { IdentityPage } from "../identity";
-import { NetworkPage } from "../sections/NetworkPage";
+import { NetworkPage } from "../network";
 import { HomePage } from "../home";
-import { PublishedPage } from "../sections/PublishedPage";
-import { RelaysPage } from "../sections/RelaysPage";
+import { PublishedPage } from "../published";
+import { RelaysPage } from "../relays";
 import { SettingsPage } from "../sections/SettingsPage";
 import {
   tauriConsoleUpdateClient,
@@ -114,12 +115,12 @@ export function ConsoleApp({
             path="/network"
             element={<NetworkPage snapshot={snapshot} />}
           />
-          <Route path="/relays" element={<RelaysPage snapshot={snapshot} />} />
+          <Route path="/relays" element={<RelaysPage client={client} />} />
           <Route
             path="/published"
             element={<PublishedPage snapshot={snapshot} />}
           />
-          <Route path="/cache" element={<CachePage snapshot={snapshot} />} />
+          <Route path="/cache" element={<StoragePage snapshot={snapshot} />} />
           <Route
             path="/settings"
             element={
@@ -132,8 +133,14 @@ export function ConsoleApp({
           />
           <Route
             path="/diagnostics"
-            element={<DiagnosticsPage snapshot={snapshot} />}
+            element={
+              <DiagnosticsPage
+                snapshot={snapshot}
+                lifecycleClient={lifecycleClient}
+              />
+            }
           />
+          <Route path="/advanced" element={<AdvancedPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ConsoleShell>
