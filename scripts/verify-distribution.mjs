@@ -9,7 +9,8 @@ const files = {
   normalizeArtifacts: readFileSync("scripts/normalize-jolt-console-artifacts.sh", "utf8"),
   assembleRelease: readFileSync("scripts/assemble-jolt-console-release.sh", "utf8"),
   updateManifest: readFileSync("scripts/write-jolt-console-update-manifest.mjs", "utf8"),
-  readme: readFileSync("README.md", "utf8")
+  readme: readFileSync("README.md", "utf8"),
+  installation: readFileSync("docs/installation.md", "utf8")
 };
 
 function tomlSection(source, name) {
@@ -151,7 +152,8 @@ const requiredMarkers = {
     "jolt-console-aarch64.app.tar.gz",
     "jolt-console-x86_64-setup.exe"
   ],
-  readme: [
+  readme: ["docs/installation.md", "releases/latest/download/jolt-console-amd64.deb"],
+  installation: [
     "curl -fsSL",
     "scripts/install-jolt-console.sh",
     "JOLT_VERSION=",
