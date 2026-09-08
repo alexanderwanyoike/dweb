@@ -16,8 +16,5 @@ it("keeps inbound reachability unverified despite connected peers", () => {
   expect(screen.getByText("Direct peers")).toBeVisible();
   expect(screen.getByText("Relayed peers")).toBeVisible();
   expect(screen.getByText("Not verified")).toBeVisible();
-  expect(screen.getByRole("link", { name: "Manage relays" })).toHaveAttribute(
-    "href",
-    "/relays",
-  );
+  expect(screen.getByRole("link", { name: "Manage relays" })).toHaveAttribute("href", "/relays");
 });

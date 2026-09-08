@@ -8,20 +8,14 @@ import { formatDuration } from "../utils/format";
 export function HomePage({ snapshot }: { snapshot: DaemonSnapshot }) {
   const { status, localIdentities } = snapshot;
   const selected = localIdentities?.identities.find(
-    (identity) => identity.address === localIdentities.active_identity,
+    (identity) => identity.address === localIdentities.active_identity
   );
-  const uptime =
-    status?.uptime_secs == null
-      ? "Not reported"
-      : formatDuration(status.uptime_secs);
+  const uptime = status?.uptime_secs == null ? "Not reported" : formatDuration(status.uptime_secs);
 
   return (
     <div className="feature-page home-page">
       <SnapshotNotice snapshot={snapshot} />
-      <TaskSection
-        title="Local node"
-        action={<Link to="/settings">Node controls</Link>}
-      >
+      <TaskSection title="Local node" action={<Link to="/settings">Node controls</Link>}>
         <div className="home-node-line">
           <NodeStatus snapshot={snapshot} />
           <dl className="home-node-facts">
@@ -35,13 +29,8 @@ export function HomePage({ snapshot }: { snapshot: DaemonSnapshot }) {
             </div>
           </dl>
         </div>
-        <TaskRow
-          title="Bootstrap"
-          description="Connection to the configured bootstrap peers."
-        >
-          <span className="home-value">
-            {status?.bootstrap_state ?? "Not reported"}
-          </span>
+        <TaskRow title="Bootstrap" description="Connection to the configured bootstrap peers.">
+          <span className="home-value">{status?.bootstrap_state ?? "Not reported"}</span>
         </TaskRow>
         <TaskRow
           title="Incoming connections"
@@ -57,16 +46,10 @@ export function HomePage({ snapshot }: { snapshot: DaemonSnapshot }) {
         >
           <Link to="/identity">Manage identities</Link>
         </TaskRow>
-        <TaskRow
-          title="App access"
-          description="Connected apps, permissions and pending requests."
-        >
+        <TaskRow title="App access" description="Connected apps, permissions and pending requests.">
           <Link to="/apps">Manage app access</Link>
         </TaskRow>
-        <TaskRow
-          title="Network"
-          description="Peer connections and relay configuration."
-        >
+        <TaskRow title="Network" description="Peer connections and relay configuration.">
           <Link to="/network">View network</Link>
         </TaskRow>
       </TaskSection>

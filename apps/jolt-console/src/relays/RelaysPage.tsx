@@ -6,11 +6,7 @@ import { createRelayGateway } from "./gateway";
 import { useRelaySettings } from "./use-relay-settings";
 import { BootstrapRelays } from "./BootstrapRelays";
 import { HomeRelay } from "./HomeRelay";
-export function RelaysPage({
-  client = tauriDaemonClient,
-}: {
-  client?: DaemonClient;
-}) {
+export function RelaysPage({ client = tauriDaemonClient }: { client?: DaemonClient }) {
   const gateway = useMemo(() => createRelayGateway(client), [client]);
   const access = useRelaySettings(gateway);
   return (
@@ -29,9 +25,7 @@ export function RelaysPage({
           Network settings error: {access.error}
         </p>
       )}
-      {!access.settings && access.busy && (
-        <p role="status">Loading relay settings…</p>
-      )}
+      {!access.settings && access.busy && <p role="status">Loading relay settings…</p>}
       {access.settings && (
         <>
           <BootstrapRelays access={access} />

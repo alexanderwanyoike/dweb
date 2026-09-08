@@ -10,7 +10,7 @@ export function RestoreDialog({
   files,
   lifecycle,
   onChanged,
-  onClose,
+  onClose
 }: {
   gateway: IdentityGateway;
   files: IdentityRecoveryFileClient;
@@ -35,7 +35,7 @@ export function RestoreDialog({
         setMessage(
           response.restart_required
             ? `Imported ${response.identity} and restarted the daemon.`
-            : `Imported ${response.identity} as a local identity.`,
+            : `Imported ${response.identity} as a local identity.`
         );
         setPending(null);
         setPassphrase("");
@@ -49,10 +49,7 @@ export function RestoreDialog({
           throw error;
         setPending(bundle);
         setMessage("This identity export needs a passphrase.");
-        if (pending)
-          throw new Error(
-            "That passphrase did not unlock the identity export.",
-          );
+        if (pending) throw new Error("That passphrase did not unlock the identity export.");
       }
     });
   }
@@ -66,8 +63,8 @@ export function RestoreDialog({
         }}
       >
         <p>
-          Import validates the bundle and adds it as a local identity without
-          replacing the daemon identity.
+          Import validates the bundle and adds it as a local identity without replacing the daemon
+          identity.
         </p>
         {pending && (
           <label>

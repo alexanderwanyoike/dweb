@@ -9,7 +9,7 @@ export function BackupDialog({
   selected,
   gateway,
   files,
-  onClose,
+  onClose
 }: {
   identities: LocalIdentity[];
   selected: string;
@@ -27,11 +27,7 @@ export function BackupDialog({
       const response = await gateway.backup(identity, passphrase, label.trim());
       const path = await files.save(response.identity, response.bundle);
       setPassphrase("");
-      setMessage(
-        path
-          ? `Exported ${response.identity} to ${path}.`
-          : "Export cancelled.",
-      );
+      setMessage(path ? `Exported ${response.identity} to ${path}.` : "Export cancelled.");
     });
   }
   return (
@@ -43,10 +39,7 @@ export function BackupDialog({
           void backup();
         }}
       >
-        <p>
-          Anyone with the export file can become this identity unless you add a
-          passphrase.
-        </p>
+        <p>Anyone with the export file can become this identity unless you add a passphrase.</p>
         <label>
           Identity
           <select

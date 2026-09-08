@@ -38,9 +38,7 @@ export function BootstrapRelays({ access }: { access: RelaySettings }) {
             />
           </label>
           <footer>
-            <button disabled={busy || !address.trim()}>
-              Add bootstrap relay
-            </button>
+            <button disabled={busy || !address.trim()}>Add bootstrap relay</button>
           </footer>
         </form>
       </details>
@@ -62,8 +60,8 @@ export function BootstrapRelays({ access }: { access: RelaySettings }) {
           ))}
         </ul>
         <p className="task-help">
-          Custom bootstrap relays take precedence over built-in defaults. Saved
-          configuration and runtime connection evidence are separate.
+          Custom bootstrap relays take precedence over built-in defaults. Saved configuration and
+          runtime connection evidence are separate.
         </p>
       </details>
     </TaskSection>

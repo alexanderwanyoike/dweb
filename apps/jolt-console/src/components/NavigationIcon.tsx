@@ -32,7 +32,7 @@ const icons: Record<string, ReactNode> = {
     <>
       <path d="m5 6 6 6-6 6M13 18h6" />
     </>
-  ),
+  )
 };
 
 export function NavigationIcon({ name }: { name: string }) {

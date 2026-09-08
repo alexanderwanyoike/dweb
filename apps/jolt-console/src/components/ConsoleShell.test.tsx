@@ -12,28 +12,24 @@ it("offers one Apps refresh that reloads access, not the unrelated daemon summar
   const client = {
     daemonUrl: "",
     get: vi.fn(async (path: string) => {
-      if (path.endsWith("identities"))
-        return { identities: [], active_identity: null };
+      if (path.endsWith("identities")) return { identities: [], active_identity: null };
       return [];
     }),
-    post: vi.fn(),
+    post: vi.fn()
   } as unknown as DaemonClient;
   const refreshDaemon = vi.fn();
   const snapshot = {
     status: null,
     connected: true,
     daemonUrl: "",
-    refresh: refreshDaemon,
+    refresh: refreshDaemon
   } as unknown as DaemonSnapshot;
   render(
     <MemoryRouter initialEntries={["/apps"]}>
       <ConsoleShell snapshot={snapshot} consoleVersion="0.5.3">
-        <AppsPage
-          gateway={createAppAccessGateway(client)}
-          refreshIntervalMs={0}
-        />
+        <AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={0} />
       </ConsoleShell>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
   await screen.findByText("A place for your apps.");
   const refresh = screen.getAllByRole("button", { name: /refresh/i });
@@ -56,16 +52,11 @@ it("restores the saved appearance without putting an appearance control in the t
       >
         <div>Screen content</div>
       </ConsoleShell>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
   expect(document.documentElement.dataset.theme).toBe("dark");
-  expect(
-    screen.queryByRole("button", { name: /appearance/i }),
-  ).not.toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "Refresh" })).toHaveAttribute(
-    "title",
-    "Refresh",
-  );
+  expect(screen.queryByRole("button", { name: /appearance/i })).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Refresh" })).toHaveAttribute("title", "Refresh");
   localStorage.clear();
   delete document.documentElement.dataset.theme;
 });

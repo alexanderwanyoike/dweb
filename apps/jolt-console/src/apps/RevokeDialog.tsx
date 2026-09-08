@@ -6,7 +6,7 @@ export function RevokeDialog({
   name,
   sessions,
   revoke,
-  onClose,
+  onClose
 }: {
   name: string;
   sessions: AppSessionGrant[];
@@ -27,13 +27,11 @@ export function RevokeDialog({
     setBusy(true);
     setError("");
     try {
-      const targets = result
-        ? result.failed.map((failure) => failure.session)
-        : sessions;
+      const targets = result ? result.failed.map((failure) => failure.session) : sessions;
       const next = await revoke(targets);
       setResult({
         succeeded: [...(result?.succeeded || []), ...next.succeeded],
-        failed: next.failed,
+        failed: next.failed
       });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : String(cause));
@@ -55,21 +53,17 @@ export function RevokeDialog({
     >
       <h2 id="revoke-title">Revoke {name} access?</h2>
       <p>
-        Remove access from these {sessions.length} sessions. Other sessions and
-        apps keep their access.
+        Remove access from these {sessions.length} sessions. Other sessions and apps keep their
+        access.
       </p>
       <div className="access-dialog-scroll">
         {sessions.map((session) => (
           <details key={session.session_id || session.request_id}>
             <summary>
               {identityFor(session)}{" "}
-              <span className="access-muted">
-                {session.app_origin || "Origin not reported"}
-              </span>
+              <span className="access-muted">{session.app_origin || "Origin not reported"}</span>
             </summary>
-            <p className="mono">
-              Session {session.session_id || "not reported"}
-            </p>
+            <p className="mono">Session {session.session_id || "not reported"}</p>
             <PermissionList grants={session.granted_capabilities} />
           </details>
         ))}
@@ -77,16 +71,15 @@ export function RevokeDialog({
       {result && (
         <div role="status">
           <p>
-            {result.succeeded.length} revoked. {result.failed.length} could not
-            be confirmed.
+            {result.succeeded.length} revoked. {result.failed.length} could not be confirmed.
           </p>
           {result.failed.map((failure) => (
             <p
               className="access-error"
               key={failure.session.session_id || failure.session.request_id}
             >
-              {failure.session.app_origin || identityFor(failure.session)}:{" "}
-              {failure.error}. Treat this session as still authorised.
+              {failure.session.app_origin || identityFor(failure.session)}: {failure.error}. Treat
+              this session as still authorised.
             </p>
           ))}
         </div>
@@ -101,11 +94,7 @@ export function RevokeDialog({
           {finished ? "Done" : "Cancel"}
         </button>
         {!finished && (
-          <button
-            className="access-danger"
-            disabled={busy}
-            onClick={() => void confirm()}
-          >
+          <button className="access-danger" disabled={busy} onClick={() => void confirm()}>
             {busy ? "Revoking…" : actionLabel}
           </button>
         )}

@@ -9,7 +9,7 @@ export function IdentityChangeDialog({
   change,
   gateway,
   onChanged,
-  onClose,
+  onClose
 }: {
   change: IdentityChange;
   gateway: IdentityGateway;
@@ -21,16 +21,14 @@ export function IdentityChangeDialog({
   const titles = {
     create: "Create identity",
     select: "Confirm selection",
-    remove: "Remove identity",
+    remove: "Remove identity"
   };
   const title = titles[change.kind];
   async function submit() {
     const succeeded = await action.run(async () => {
       if (change.kind === "create") await gateway.create(name.trim());
-      if (change.kind === "select")
-        await gateway.select(change.identity.address);
-      if (change.kind === "remove")
-        await gateway.remove(change.identity.address);
+      if (change.kind === "select") await gateway.select(change.identity.address);
+      if (change.kind === "remove") await gateway.remove(change.identity.address);
       await onChanged();
     });
     if (succeeded) onClose();
@@ -47,8 +45,8 @@ export function IdentityChangeDialog({
         {change.kind === "create" ? (
           <>
             <p>
-              A local label helps you recognise this identity. Apps manage their
-              own public profiles.
+              A local label helps you recognise this identity. Apps manage their own public
+              profiles.
             </p>
             <label>
               Identity name
@@ -78,9 +76,7 @@ export function IdentityChangeDialog({
             Cancel
           </button>
           <button
-            className={
-              change.kind === "remove" ? "access-danger" : "task-primary"
-            }
+            className={change.kind === "remove" ? "access-danger" : "task-primary"}
             disabled={action.busy || (change.kind === "create" && !name.trim())}
           >
             {title}

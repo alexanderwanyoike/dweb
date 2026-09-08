@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 export function TaskSection({
   title,
   children,
-  action,
+  action
 }: {
   title: string;
   children: ReactNode;
@@ -21,7 +21,7 @@ export function TaskSection({
 export function TaskRow({
   title,
   description,
-  children,
+  children
 }: {
   title: string;
   description?: ReactNode;

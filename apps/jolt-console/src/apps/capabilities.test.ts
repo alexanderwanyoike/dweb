@@ -6,7 +6,7 @@ it.each(["constructor", "toString", "__proto__", "unknown:grant"])(
   (code) => {
     expect(capabilityInfo(code)).toMatchObject({
       label: code,
-      grantable: false,
+      grantable: false
     });
-  },
+  }
 );

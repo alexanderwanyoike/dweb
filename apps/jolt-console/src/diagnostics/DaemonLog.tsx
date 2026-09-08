@@ -14,7 +14,7 @@ export function DaemonLog({
   state,
   error,
   busy,
-  onRefresh,
+  onRefresh
 }: {
   state: DaemonLifecycleState | null;
   error: string | null;
@@ -41,16 +41,11 @@ export function DaemonLog({
           />
           Follow output
         </label>
-        <RefreshButton
-          label="Refresh daemon logs"
-          disabled={busy}
-          onClick={onRefresh}
-        />
+        <RefreshButton label="Refresh daemon logs" disabled={busy} onClick={onRefresh} />
       </header>
       {error && (
         <p role="alert">
-          Could not refresh daemon logs: {error}. Showing the last captured
-          output.
+          Could not refresh daemon logs: {error}. Showing the last captured output.
         </p>
       )}
       <pre
@@ -64,11 +59,7 @@ export function DaemonLog({
       </pre>
       <div className="daemon-log-caption">
         <span>Latest captured output · refreshes every 2 seconds</span>
-        <span>
-          {state?.ownership === "console"
-            ? "Started by Console"
-            : state?.message}
-        </span>
+        <span>{state?.ownership === "console" ? "Started by Console" : state?.message}</span>
       </div>
     </section>
   );

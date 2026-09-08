@@ -30,7 +30,7 @@ describe("ConsoleApp", () => {
             cached_count: 4,
             bootstrap_state: "connected",
             known_relay_count: 2,
-            connected_bootstrap_peers: 1,
+            connected_bootstrap_peers: 1
           };
         }
         if (path === "/api/v1/cache/stats") {
@@ -38,7 +38,7 @@ describe("ConsoleApp", () => {
             total_cached: 4096,
             total_published: 2048,
             pinned_items: 1,
-            available: 8192,
+            available: 8192
           };
         }
         const inventory = defaultInventoryEndpoint(path);
@@ -50,23 +50,17 @@ describe("ConsoleApp", () => {
               address: "alice.jolt/demo/post",
               path: "/demo/post",
               size: 42,
-              pin_state: "pinned",
-            },
+              pin_state: "pinned"
+            }
           ];
         }
         throw new Error(`unexpected path ${path}`);
       }),
-      post: vi.fn(),
+      post: vi.fn()
     };
     const lifecycleClient = healthyLifecycleClient();
 
-    render(
-      <ConsoleApp
-        client={client}
-        lifecycleClient={lifecycleClient}
-        refreshIntervalMs={0}
-      />,
-    );
+    render(<ConsoleApp client={client} lifecycleClient={lifecycleClient} refreshIntervalMs={0} />);
 
     expect(await screen.findAllByText("connected")).not.toHaveLength(0);
     expect(screen.getByText("3")).toBeInTheDocument();
@@ -75,19 +69,15 @@ describe("ConsoleApp", () => {
     expect(await screen.findAllByText("alice.jolt")).not.toHaveLength(0);
 
     await userEvent.click(screen.getByRole("link", { name: "Advanced" }));
-    await userEvent.click(
-      screen.getByRole("link", { name: "Published content" }),
-    );
+    await userEvent.click(screen.getByRole("link", { name: "Published content" }));
     expect(await screen.findByText("/demo/post")).toBeInTheDocument();
     expect(
       within(screen.getByLabelText("Jolt Console sections")).getByRole("link", {
-        name: "Advanced",
-      }),
+        name: "Advanced"
+      })
     ).toHaveClass("active");
 
-    await userEvent.click(
-      screen.getByRole("link", { name: "Diagnostics", exact: true }),
-    );
+    await userEvent.click(screen.getByRole("link", { name: "Diagnostics", exact: true }));
     expect(await screen.findByText(/12D3KooAlice/)).toBeInTheDocument();
   });
 
@@ -106,7 +96,7 @@ describe("ConsoleApp", () => {
             published_count: 1,
             cached_count: 4,
             bootstrap_state: "connected",
-            known_relay_count: 2,
+            known_relay_count: 2
           };
         }
         if (path === "/api/v1/cache/stats") return {};
@@ -115,7 +105,7 @@ describe("ConsoleApp", () => {
         if (path === "/api/v1/published") return [];
         throw new Error(`unexpected path ${path}`);
       }),
-      post: vi.fn(),
+      post: vi.fn()
     };
 
     render(
@@ -123,7 +113,7 @@ describe("ConsoleApp", () => {
         client={client}
         lifecycleClient={healthyLifecycleClient()}
         refreshIntervalMs={1000}
-      />,
+      />
     );
 
     await act(async () => {});
@@ -150,7 +140,7 @@ describe("ConsoleApp", () => {
         if (path === "/api/v1/published") return [];
         throw new Error(`unexpected path ${path}`);
       }),
-      post: vi.fn(),
+      post: vi.fn()
     };
 
     render(
@@ -158,7 +148,7 @@ describe("ConsoleApp", () => {
         client={client}
         lifecycleClient={healthyLifecycleClient()}
         refreshIntervalMs={1000}
-      />,
+      />
     );
 
     await act(async () => {});
@@ -185,7 +175,7 @@ describe("ConsoleApp", () => {
           return {
             identity_address: "alice.jolt",
             connected_peers: 3,
-            bootstrap_state: "connected",
+            bootstrap_state: "connected"
           };
         }
         if (path === "/api/v1/cache/stats") return {};
@@ -194,14 +184,14 @@ describe("ConsoleApp", () => {
         if (path === "/api/v1/published") return [];
         throw new Error(`unexpected path ${path}`);
       }),
-      post: vi.fn(),
+      post: vi.fn()
     };
     const lifecycleClient: DaemonLifecycleClient = {
       status: vi.fn(async () => ({
         daemon_url: "http://127.0.0.1:9862",
         reachability: "unavailable",
         ownership: "none",
-        message: "No local daemon is responding",
+        message: "No local daemon is responding"
       })),
       start: vi.fn(async () => {
         started = true;
@@ -209,20 +199,14 @@ describe("ConsoleApp", () => {
           daemon_url: "http://127.0.0.1:9862",
           reachability: "healthy",
           ownership: "console",
-          message: "Console owns this daemon",
+          message: "Console owns this daemon"
         };
       }),
       stop: vi.fn(),
-      restart: vi.fn(),
+      restart: vi.fn()
     };
 
-    render(
-      <ConsoleApp
-        client={client}
-        lifecycleClient={lifecycleClient}
-        refreshIntervalMs={0}
-      />,
-    );
+    render(<ConsoleApp client={client} lifecycleClient={lifecycleClient} refreshIntervalMs={0} />);
 
     expect(await screen.findAllByText("connected")).not.toHaveLength(0);
     expect(lifecycleClient.start).toHaveBeenCalledOnce();
@@ -233,9 +217,9 @@ describe("ConsoleApp", () => {
       check: vi.fn(async () => ({
         available: true,
         version: "0.2.0",
-        currentVersion: "0.1.0",
+        currentVersion: "0.1.0"
       })),
-      installAndRelaunch: vi.fn(),
+      installAndRelaunch: vi.fn()
     };
 
     render(
@@ -244,12 +228,10 @@ describe("ConsoleApp", () => {
         lifecycleClient={healthyLifecycleClient()}
         updateClient={updateClient}
         refreshIntervalMs={0}
-      />,
+      />
     );
 
-    expect(
-      await screen.findByRole("link", { name: "Update 0.2.0" }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Update 0.2.0" })).toBeInTheDocument();
     await userEvent.click(screen.getByRole("link", { name: "Update 0.2.0" }));
     expect(await screen.findByText("Update available")).toBeVisible();
     expect(updateClient.check).toHaveBeenCalledOnce();
@@ -262,7 +244,7 @@ describe("ConsoleApp", () => {
         lifecycleClient={healthyLifecycleClient()}
         consoleVersion="9.8.7"
         refreshIntervalMs={0}
-      />,
+      />
     );
 
     expect(await screen.findByText("Console v9.8.7")).toBeInTheDocument();
@@ -276,17 +258,15 @@ function healthyLifecycleClient(): DaemonLifecycleClient {
       daemon_url: "http://127.0.0.1:9862",
       reachability: "healthy",
       ownership: "external",
-      message: "Connected to an externally started daemon",
+      message: "Connected to an externally started daemon"
     })),
     start: vi.fn(),
     stop: vi.fn(),
-    restart: vi.fn(),
+    restart: vi.fn()
   };
 }
 
-function healthyDaemonClient(
-  statusOverrides: Record<string, unknown> = {},
-): DaemonClient {
+function healthyDaemonClient(statusOverrides: Record<string, unknown> = {}): DaemonClient {
   return {
     daemonUrl: "http://127.0.0.1:9862",
     get: vi.fn(async (path: string) => {
@@ -296,7 +276,7 @@ function healthyDaemonClient(
           peer_id: "12D3KooAlice",
           connected_peers: 3,
           bootstrap_state: "connected",
-          ...statusOverrides,
+          ...statusOverrides
         };
       }
       if (path === "/api/v1/cache/stats") return {};
@@ -305,7 +285,7 @@ function healthyDaemonClient(
       if (path === "/api/v1/published") return [];
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(),
+    post: vi.fn()
   };
 }
 
@@ -315,7 +295,7 @@ function defaultInventoryEndpoint(path: string) {
   if (path === "/admin/v1/identities") {
     return {
       active_identity: "alice.jolt",
-      identities: [{ address: "alice.jolt", label: "Default", active: true }],
+      identities: [{ address: "alice.jolt", label: "Default", active: true }]
     };
   }
   return undefined;

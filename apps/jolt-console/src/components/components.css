@@ -273,9 +273,7 @@
     0 0 0 2px #33ed811c,
     0 0 8px #33ed8190;
 }
-:root[data-theme="dark"]
-  .node-status[data-state="unavailable"]
-  .node-status-dot {
+:root[data-theme="dark"] .node-status[data-state="unavailable"] .node-status-dot {
   background: #ff4c5e;
   box-shadow:
     0 0 0 2px #ff4c5e1c,

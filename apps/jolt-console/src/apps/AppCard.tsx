@@ -6,7 +6,7 @@ import {
   identityGroups,
   permissionsDiffer,
   type AppAccess,
-  type AppSessionGrant,
+  type AppSessionGrant
 } from "./model";
 import { SessionDetails } from "./SessionDetails";
 import { sessionTimeLabel } from "./format";
@@ -17,7 +17,7 @@ export function AppCard({
   app,
   identities,
   busy,
-  onRevoke,
+  onRevoke
 }: {
   app: AppAccess;
   identities: LocalIdentitiesPayload;
@@ -73,8 +73,8 @@ export function AppCard({
           </div>
           {permissionsVary && (
             <p className="access-muted">
-              Permissions differ between sessions. This list includes all
-              authorised access; inspect a session for its exact grants.
+              Permissions differ between sessions. This list includes all authorised access; inspect
+              a session for its exact grants.
             </p>
           )}
           {hasActiveAccess && (
@@ -94,17 +94,11 @@ export function AppCard({
           ))}
           {app.history.length > 0 && (
             <details className="access-history">
-              <summary>
-                Revoked and expired history ({app.history.length})
-              </summary>
+              <summary>Revoked and expired history ({app.history.length})</summary>
               {app.history.map((session) => (
                 <div key={session.session_id || session.request_id}>
                   <p className="mono">{identityFor(session)}</p>
-                  <SessionDetails
-                    session={session}
-                    busy={busy}
-                    onRevoke={() => {}}
-                  />
+                  <SessionDetails session={session} busy={busy} onRevoke={() => {}} />
                 </div>
               ))}
             </details>

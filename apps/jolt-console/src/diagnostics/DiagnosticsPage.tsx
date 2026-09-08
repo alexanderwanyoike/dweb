@@ -2,10 +2,7 @@ import { DaemonLog } from "./DaemonLog";
 import { useDaemonMonitor } from "../daemon/use-daemon-monitor";
 import { useState } from "react";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
-import {
-  tauriDaemonLifecycleClient,
-  type DaemonLifecycleClient,
-} from "../daemon/lifecycle";
+import { tauriDaemonLifecycleClient, type DaemonLifecycleClient } from "../daemon/lifecycle";
 import { AdvancedNav } from "../advanced";
 import { TaskSection, TaskRow } from "../components/TaskSection";
 import { SnapshotNotice } from "../components/SnapshotNotice";
@@ -14,7 +11,7 @@ import { errorMessage } from "../utils/use-action";
 import { CONSOLE_VERSION } from "../version";
 export function DiagnosticsPage({
   snapshot,
-  lifecycleClient = tauriDaemonLifecycleClient,
+  lifecycleClient = tauriDaemonLifecycleClient
 }: {
   snapshot: DaemonSnapshot;
   lifecycleClient?: DaemonLifecycleClient;
@@ -32,10 +29,10 @@ export function DiagnosticsPage({
       status: snapshot.status,
       peers: snapshot.peers,
       error: snapshot.lastError,
-      lifecycle,
+      lifecycle
     },
     null,
-    2,
+    2
   );
   async function copy() {
     try {
@@ -100,8 +97,8 @@ export function DiagnosticsPage({
       {review && (
         <Dialog title="Review support details" onClose={() => setReview(null)}>
           <p>
-            This excerpt includes node identifiers, addresses and available
-            logs. Review it before copying. Nothing is sent automatically.
+            This excerpt includes node identifiers, addresses and available logs. Review it before
+            copying. Nothing is sent automatically.
           </p>
           <pre className="diagnostics-output">{review}</pre>
           <button onClick={() => void copy()}>Copy details</button>

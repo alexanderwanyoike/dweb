@@ -1,9 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { it, expect, vi } from "vitest";
-import type {
-  DaemonLifecycleClient,
-  DaemonLifecycleState,
-} from "../daemon/lifecycle";
+import type { DaemonLifecycleClient, DaemonLifecycleState } from "../daemon/lifecycle";
 import { useConsoleStartup } from "./use-console-startup";
 it("does not start a node after Console closes during its initial status check", async () => {
   let resolve!: (state: DaemonLifecycleState) => void;
@@ -14,7 +11,7 @@ it("does not start a node after Console closes during its initial status check",
     status: vi.fn(() => status),
     start: vi.fn(),
     stop: vi.fn(),
-    restart: vi.fn(),
+    restart: vi.fn()
   };
   const view = renderHook(() => useConsoleStartup(client, vi.fn()));
   view.unmount();
@@ -23,7 +20,7 @@ it("does not start a node after Console closes during its initial status check",
       daemon_url: "localhost",
       ownership: "none",
       reachability: "unavailable",
-      message: "Stopped",
+      message: "Stopped"
     });
     await status;
   });

@@ -10,7 +10,9 @@ const files = {
   main: readFileSync(join(root, "src/main.tsx"), "utf8"),
   app: readFileSync(join(root, "src/app/App.tsx"), "utf8"),
   shell: readFileSync(join(root, "src/components/ConsoleShell.tsx"), "utf8"),
-  navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8") + readFileSync(join(root, "src/advanced/navigation.ts"), "utf8"),
+  navigation:
+    readFileSync(join(root, "src/app/navigation.ts"), "utf8") +
+    readFileSync(join(root, "src/advanced/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
   appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
   settingsPage: readFileSync(join(root, "src/settings/UpdateSettings.tsx"), "utf8"),
@@ -54,7 +56,10 @@ if (!files.main.includes("createRoot") || !files.packageJson.includes("react-rou
   throw new Error("Console must be wired as a React app");
 }
 
-if (!files.appGateway.includes("/admin/v1/app-requests") || !files.appGateway.includes("/admin/v1/app-access/sessions")) {
+if (
+  !files.appGateway.includes("/admin/v1/app-requests") ||
+  !files.appGateway.includes("/admin/v1/app-access/sessions")
+) {
   throw new Error("Apps section must reserve the app permission API surface");
 }
 
@@ -66,18 +71,29 @@ for (const marker of ["Jolt Console"]) {
 
 const tauriConfig = JSON.parse(files.tauriConfig);
 const window = tauriConfig.app.windows[0];
-if (window.width !== 1100 || window.height !== 760 || window.resizable !== false || window.maximizable !== false) {
+if (
+  window.width !== 1100 ||
+  window.height !== 760 ||
+  window.resizable !== false ||
+  window.maximizable !== false
+) {
   throw new Error("Console must use its fixed 1100 x 760 native window");
 }
 if (tauriConfig.bundle?.active !== true) {
   throw new Error("Tauri bundle must be enabled for v0 distribution");
 }
 
-if (!Array.isArray(tauriConfig.bundle?.targets) || !tauriConfig.bundle.targets.includes("appimage")) {
+if (
+  !Array.isArray(tauriConfig.bundle?.targets) ||
+  !tauriConfig.bundle.targets.includes("appimage")
+) {
   throw new Error("Tauri bundle must include a Linux AppImage target");
 }
 
-if (!Array.isArray(tauriConfig.bundle?.externalBin) || !tauriConfig.bundle.externalBin.includes("binaries/jolt")) {
+if (
+  !Array.isArray(tauriConfig.bundle?.externalBin) ||
+  !tauriConfig.bundle.externalBin.includes("binaries/jolt")
+) {
   throw new Error("Tauri bundle must declare the jolt daemon sidecar");
 }
 

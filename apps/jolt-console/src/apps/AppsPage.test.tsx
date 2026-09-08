@@ -15,43 +15,28 @@ afterEach(() => {
 it("shows one app for multiple identities and reviews exact sessions before revoking", async () => {
   const sessions = [
     grant("one"),
-    grant("two", { identity: "bob.jolt", app_origin: "http://localhost:5179" }),
+    grant("two", { identity: "bob.jolt", app_origin: "http://localhost:5179" })
   ];
   const client = {
     daemonUrl: "",
     get: vi.fn(async (path: string) => {
       if (path.endsWith("/sessions")) return sessions;
-      if (path.endsWith("identities"))
-        return { identities: [], active_identity: "alice.jolt" };
+      if (path.endsWith("identities")) return { identities: [], active_identity: "alice.jolt" };
       return [];
     }),
-    post: vi.fn(async () => ({})),
+    post: vi.fn(async () => ({}))
   } as unknown as DaemonClient;
-  render(
-    <AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={0} />,
-  );
-  await userEvent.click(
-    await screen.findByRole("button", { name: "Manage Spoke access" }),
-  );
-  expect(
-    screen.getAllByRole("button", { name: "Manage Spoke access" }),
-  ).toHaveLength(1);
-  await userEvent.click(
-    screen.getByRole("button", { name: "Revoke Spoke access" }),
-  );
+  render(<AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={0} />);
+  await userEvent.click(await screen.findByRole("button", { name: "Manage Spoke access" }));
+  expect(screen.getAllByRole("button", { name: "Manage Spoke access" })).toHaveLength(1);
+  await userEvent.click(screen.getByRole("button", { name: "Revoke Spoke access" }));
   const dialog = screen.getByRole("dialog", { name: "Revoke Spoke access?" });
   expect(within(dialog).getByText("alice.jolt")).toBeVisible();
   expect(within(dialog).getByText("bob.jolt")).toBeVisible();
   expect(client.post).not.toHaveBeenCalled();
-  await userEvent.click(
-    within(dialog).getByRole("button", { name: "Revoke access" }),
-  );
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-access/sessions/one/revoke",
-  );
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-access/sessions/two/revoke",
-  );
+  await userEvent.click(within(dialog).getByRole("button", { name: "Revoke access" }));
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-access/sessions/one/revoke");
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-access/sessions/two/revoke");
 });
 
 it("keeps partial failures visible and retries only the failed sessions", async () => {
@@ -61,48 +46,30 @@ it("keeps partial failures visible and retries only the failed sessions", async 
     daemonUrl: "",
     get: vi.fn(async (path: string) => {
       if (path.endsWith("/sessions")) return sessions;
-      if (path.endsWith("identities"))
-        return { identities: [], active_identity: null };
+      if (path.endsWith("identities")) return { identities: [], active_identity: null };
       return [];
     }),
     post: vi.fn(async (path: string) => {
-      if (path.includes("/two/") && failSecond)
-        throw new Error("Connection lost");
+      if (path.includes("/two/") && failSecond) throw new Error("Connection lost");
       sessions = sessions.map((session) =>
-        path.includes(`/${session.session_id}/`)
-          ? { ...session, status: "revoked" }
-          : session,
+        path.includes(`/${session.session_id}/`) ? { ...session, status: "revoked" } : session
       );
       return {};
-    }),
+    })
   } as unknown as DaemonClient;
-  render(
-    <AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={0} />,
-  );
-  await userEvent.click(
-    await screen.findByRole("button", { name: "Manage Spoke access" }),
-  );
-  await userEvent.click(
-    screen.getByRole("button", { name: "Revoke Spoke access" }),
-  );
+  render(<AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={0} />);
+  await userEvent.click(await screen.findByRole("button", { name: "Manage Spoke access" }));
+  await userEvent.click(screen.getByRole("button", { name: "Revoke Spoke access" }));
   await userEvent.click(screen.getByRole("button", { name: "Revoke access" }));
-  expect(
-    await screen.findByText("1 revoked. 1 could not be confirmed."),
-  ).toBeVisible();
-  expect(
-    screen.getByText(/Treat this session as still authorised/),
-  ).toBeVisible();
+  expect(await screen.findByText("1 revoked. 1 could not be confirmed.")).toBeVisible();
+  expect(screen.getByText(/Treat this session as still authorised/)).toBeVisible();
   failSecond = false;
-  await userEvent.click(
-    screen.getByRole("button", { name: "Retry failed sessions" }),
-  );
-  expect(
-    await screen.findByText("2 revoked. 0 could not be confirmed."),
-  ).toBeVisible();
+  await userEvent.click(screen.getByRole("button", { name: "Retry failed sessions" }));
+  expect(await screen.findByText("2 revoked. 0 could not be confirmed.")).toBeVisible();
   expect(vi.mocked(client.post).mock.calls.map(([path]) => path)).toEqual([
     "/admin/v1/app-access/sessions/one/revoke",
     "/admin/v1/app-access/sessions/two/revoke",
-    "/admin/v1/app-access/sessions/two/revoke",
+    "/admin/v1/app-access/sessions/two/revoke"
   ]);
   await userEvent.click(screen.getByRole("button", { name: "Done" }));
   expect(screen.getByText("No active access")).toBeVisible();
@@ -111,7 +78,7 @@ it("keeps partial failures visible and retries only the failed sessions", async 
 function localIdentitiesPayload() {
   return {
     active_identity: "alice.jolt",
-    identities: [{ address: "alice.jolt", label: "Default", active: true }],
+    identities: [{ address: "alice.jolt", label: "Default", active: true }]
   };
 }
 
@@ -130,7 +97,7 @@ it("renders app permission requests and can approve, reject, and revoke grants",
             requested_capabilities: ["resolve:public"],
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_780_000_300,
+            created_at: 1_780_000_300
           },
           {
             request_id: "req_pastey",
@@ -143,11 +110,11 @@ it("renders app permission requests and can approve, reject, and revoke grants",
               "fetch:public",
               "publish:/pastes/*",
               "pin:own:/pastes/*",
-              "export:keys",
+              "export:keys"
             ],
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_780_000_000,
+            created_at: 1_780_000_000
           },
           {
             request_id: "req_rejected",
@@ -159,8 +126,8 @@ it("renders app permission requests and can approve, reject, and revoke grants",
             granted_capabilities: [],
             status: "rejected",
             created_at: 1_780_000_200,
-            rejected_at: 1_780_000_250,
-          },
+            rejected_at: 1_780_000_250
+          }
         ];
       }
       if (path === "/admin/v1/app-access/sessions") {
@@ -177,7 +144,7 @@ it("renders app permission requests and can approve, reject, and revoke grants",
             status: "active",
             created_at: 1_780_000_300,
             approved_at: 1_780_000_300,
-            last_used_at: 1_780_000_400,
+            last_used_at: 1_780_000_400
           },
           {
             request_id: "req_notes",
@@ -190,61 +157,49 @@ it("renders app permission requests and can approve, reject, and revoke grants",
             status: "active",
             created_at: 1_780_000_000,
             approved_at: 1_780_000_100,
-            last_used_at: 1_780_000_200,
-          },
+            last_used_at: 1_780_000_200
+          }
         ];
       }
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(async () => ({ ok: true })),
+    post: vi.fn(async () => ({ ok: true }))
   };
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
   const pendingRows = await screen.findAllByRole("button", {
-    name: /request details/i,
+    name: /request details/i
   });
   expect(pendingRows[0]).toHaveTextContent("Scratch");
   expect(pendingRows[1]).toHaveTextContent("Pastey");
   expect(pendingRows[2]).toHaveTextContent("Archiver");
   await userEvent.click(screen.getByText("Rejected requests (1)"));
-  expect(
-    screen.getByRole("button", { name: /Archiver.*request details/i }),
-  ).toHaveTextContent("rejected");
+  expect(screen.getByRole("button", { name: /Archiver.*request details/i })).toHaveTextContent(
+    "rejected"
+  );
 
   expect(
-    screen.queryByText("create or update signed paths under /pastes/*"),
+    screen.queryByText("create or update signed paths under /pastes/*")
   ).not.toBeInTheDocument();
 
   await userEvent.click(pendingRows[1]);
   expect(screen.getAllByText("alice.jolt")).not.toHaveLength(0);
+  expect(screen.getByText("create or update signed paths under /pastes/*")).toBeInTheDocument();
   expect(
-    screen.getByText("create or update signed paths under /pastes/*"),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.getByText("This request includes permissions Console cannot approve.")
   ).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Approve Pastey" })).toBeDisabled();
 
-  await userEvent.click(
-    screen.getByRole("button", { name: "Manage Notes access" }),
-  );
+  await userEvent.click(screen.getByRole("button", { name: "Manage Notes access" }));
 
   await userEvent.click(screen.getByRole("button", { name: "Reject Pastey" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-requests/req_pastey/reject",
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-requests/req_pastey/reject");
 
-  await userEvent.click(
-    screen.getByRole("button", { name: "Revoke Notes access" }),
-  );
+  await userEvent.click(screen.getByRole("button", { name: "Revoke Notes access" }));
   await userEvent.click(screen.getByRole("button", { name: "Revoke access" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-access/sessions/sess_notes/revoke",
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-access/sessions/sess_notes/revoke");
 });
 
 it("can approve scoped encrypted Pastey capabilities", async () => {
@@ -256,7 +211,7 @@ it("can approve scoped encrypted Pastey capabilities", async () => {
     "inventory:/pastes/*",
     "pin:own:/pastes/*",
     "encrypt:/pastes/*",
-    "decrypt:/pastes/*",
+    "decrypt:/pastes/*"
   ];
   const client: DaemonClient = {
     daemonUrl: "http://127.0.0.1:9862",
@@ -272,46 +227,33 @@ it("can approve scoped encrypted Pastey capabilities", async () => {
             requested_capabilities: requestedCapabilities,
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_780_000_500,
-          },
+            created_at: 1_780_000_500
+          }
         ];
       }
       if (path === "/admin/v1/app-access/sessions") return [];
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(async () => ({ ok: true })),
+    post: vi.fn(async () => ({ ok: true }))
   };
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
-  await userEvent.click(
-    await screen.findByRole("button", { name: /request details/i }),
-  );
+  await userEvent.click(await screen.findByRole("button", { name: /request details/i }));
+  expect(screen.getByText("publish encrypted content under /pastes/*")).toBeInTheDocument();
+  expect(screen.getByText("encrypt content under /pastes/*")).toBeInTheDocument();
+  expect(screen.getByText("decrypt content under /pastes/*")).toBeInTheDocument();
   expect(
-    screen.getByText("publish encrypted content under /pastes/*"),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText("encrypt content under /pastes/*"),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText("decrypt content under /pastes/*"),
-  ).toBeInTheDocument();
-  expect(
-    screen.queryByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.queryByText("This request includes permissions Console cannot approve.")
   ).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: "Approve Pastey" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-requests/req_private_pastey/approve",
-    {
-      identity: "alice.jolt",
-      capabilities: requestedCapabilities,
-      expires_at: null,
-    },
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-requests/req_private_pastey/approve", {
+    identity: "alice.jolt",
+    capabilities: requestedCapabilities,
+    expires_at: null
+  });
 });
 
 it("can approve Chirp Data SDK capabilities", async () => {
@@ -321,38 +263,27 @@ it("can approve Chirp Data SDK capabilities", async () => {
     "publish:/chirp/posts/*",
     "delete:/chirp/posts/*",
     "publish:/chirp/following",
-    "subscribe:any:/chirp/posts/*",
+    "subscribe:any:/chirp/posts/*"
   ];
   const client = pendingChirpRequestClient(requestedCapabilities);
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
-  await userEvent.click(
-    await screen.findByRole("button", { name: /request details/i }),
-  );
+  await userEvent.click(await screen.findByRole("button", { name: /request details/i }));
+  expect(screen.getByText("delete records under /chirp/posts/*")).toBeInTheDocument();
   expect(
-    screen.getByText("delete records under /chirp/posts/*"),
+    screen.getByText("subscribe to verified records under /chirp/posts/* for any identity")
   ).toBeInTheDocument();
   expect(
-    screen.getByText(
-      "subscribe to verified records under /chirp/posts/* for any identity",
-    ),
-  ).toBeInTheDocument();
-  expect(
-    screen.queryByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.queryByText("This request includes permissions Console cannot approve.")
   ).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: "Approve Chirp" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-requests/req_chirp/approve",
-    {
-      identity: "alice.jolt",
-      capabilities: requestedCapabilities,
-      expires_at: null,
-    },
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-requests/req_chirp/approve", {
+    identity: "alice.jolt",
+    capabilities: requestedCapabilities,
+    expires_at: null
+  });
 });
 
 it("blocks a subscription for a malformed exact identity", async () => {
@@ -376,29 +307,20 @@ it("can approve a subscription for one exact identity", async () => {
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
-  await userEvent.click(
-    await screen.findByRole("button", { name: /request details/i }),
-  );
+  await userEvent.click(await screen.findByRole("button", { name: /request details/i }));
   expect(
-    screen.getByText(
-      `subscribe to verified records under /chirp/posts/* for ${identity}`,
-    ),
+    screen.getByText(`subscribe to verified records under /chirp/posts/* for ${identity}`)
   ).toBeInTheDocument();
   expect(
-    screen.queryByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.queryByText("This request includes permissions Console cannot approve.")
   ).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: "Approve Chirp" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-requests/req_chirp/approve",
-    {
-      identity: "alice.jolt",
-      capabilities: [capability],
-      expires_at: null,
-    },
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-requests/req_chirp/approve", {
+    identity: "alice.jolt",
+    capabilities: [capability],
+    expires_at: null
+  });
 });
 
 it("can approve Spoke ingress review capabilities", async () => {
@@ -413,7 +335,7 @@ it("can approve Spoke ingress review capabilities", async () => {
     "decrypt:/spoke/*",
     "ingress:send",
     "ingress:read",
-    "ingress:decide",
+    "ingress:decide"
   ];
   const client: DaemonClient = {
     daemonUrl: "http://127.0.0.1:9862",
@@ -429,46 +351,33 @@ it("can approve Spoke ingress review capabilities", async () => {
             requested_capabilities: requestedCapabilities,
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_780_000_600,
-          },
+            created_at: 1_780_000_600
+          }
         ];
       }
       if (path === "/admin/v1/app-access/sessions") return [];
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(async () => ({ ok: true })),
+    post: vi.fn(async () => ({ ok: true }))
   };
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
-  await userEvent.click(
-    await screen.findByRole("button", { name: /request details/i }),
-  );
+  await userEvent.click(await screen.findByRole("button", { name: /request details/i }));
+  expect(screen.getByText("send incoming app objects by identity")).toBeInTheDocument();
+  expect(screen.getByText("read pending incoming app objects")).toBeInTheDocument();
+  expect(screen.getByText("accept or reject pending incoming app objects")).toBeInTheDocument();
   expect(
-    screen.getByText("send incoming app objects by identity"),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText("read pending incoming app objects"),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText("accept or reject pending incoming app objects"),
-  ).toBeInTheDocument();
-  expect(
-    screen.queryByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.queryByText("This request includes permissions Console cannot approve.")
   ).not.toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: "Approve Spoke" }));
-  expect(client.post).toHaveBeenCalledWith(
-    "/admin/v1/app-requests/req_spoke/approve",
-    {
-      identity: "alice.jolt",
-      capabilities: requestedCapabilities,
-      expires_at: null,
-    },
-  );
+  expect(client.post).toHaveBeenCalledWith("/admin/v1/app-requests/req_spoke/approve", {
+    identity: "alice.jolt",
+    capabilities: requestedCapabilities,
+    expires_at: null
+  });
 });
 
 it("shows the active local identity for app requests without an explicit identity", async () => {
@@ -485,8 +394,8 @@ it("shows the active local identity for app requests without an explicit identit
             requested_capabilities: ["resolve:public"],
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_780_000_700,
-          },
+            created_at: 1_780_000_700
+          }
         ];
       }
       if (path === "/admin/v1/app-access/sessions") return [];
@@ -495,19 +404,19 @@ it("shows the active local identity for app requests without an explicit identit
           active_identity: "work.jolt",
           identities: [
             { address: "alice.jolt", label: "Default", active: false },
-            { address: "work.jolt", label: "Work", active: true },
-          ],
+            { address: "work.jolt", label: "Work", active: true }
+          ]
         };
       }
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(async () => ({ ok: true })),
+    post: vi.fn(async () => ({ ok: true }))
   };
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
   const request = await screen.findByRole("button", {
-    name: /request details/i,
+    name: /request details/i
   });
   expect(request).toHaveTextContent("work.jolt");
 
@@ -524,7 +433,7 @@ it("renders apps empty state when there are no requests or sessions", async () =
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(path);
     }),
-    post: vi.fn(),
+    post: vi.fn()
   };
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
@@ -542,7 +451,7 @@ it("updates app permission requests without manual refresh", async () => {
         const requestCalls = vi
           .mocked(client.get)
           .mock.calls.filter(
-            ([calledPath]) => calledPath === "/admin/v1/app-access/requests",
+            ([calledPath]) => calledPath === "/admin/v1/app-access/requests"
           ).length;
         return requestCalls < 2
           ? []
@@ -556,23 +465,18 @@ it("updates app permission requests without manual refresh", async () => {
                 requested_capabilities: ["resolve:public"],
                 granted_capabilities: [],
                 status: "pending",
-                created_at: 1_780_000_000,
-              },
+                created_at: 1_780_000_000
+              }
             ];
       }
       if (path === "/admin/v1/app-access/sessions") return [];
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(),
+    post: vi.fn()
   };
 
-  render(
-    <AppsPage
-      gateway={createAppAccessGateway(client)}
-      refreshIntervalMs={1000}
-    />,
-  );
+  render(<AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={1000} />);
 
   await act(async () => {});
   expect(screen.getByText("No app requests yet.")).toBeInTheDocument();
@@ -581,9 +485,7 @@ it("updates app permission requests without manual refresh", async () => {
     await vi.advanceTimersByTimeAsync(1000);
   });
 
-  expect(
-    screen.queryByRole("button", { name: /request details/i }),
-  ).toHaveTextContent("Pastey");
+  expect(screen.queryByRole("button", { name: /request details/i })).toHaveTextContent("Pastey");
 });
 
 it("backs off app permission polling after an API failure", async () => {
@@ -598,15 +500,10 @@ it("backs off app permission polling after an API failure", async () => {
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(),
+    post: vi.fn()
   };
 
-  render(
-    <AppsPage
-      gateway={createAppAccessGateway(client)}
-      refreshIntervalMs={1000}
-    />,
-  );
+  render(<AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={1000} />);
 
   await act(async () => {});
   expect(screen.getByText(/daemon offline/)).toBeInTheDocument();
@@ -633,7 +530,7 @@ it("updates active and revoked app sessions without manual refresh", async () =>
         const sessionCalls = vi
           .mocked(client.get)
           .mock.calls.filter(
-            ([calledPath]) => calledPath === "/admin/v1/app-access/sessions",
+            ([calledPath]) => calledPath === "/admin/v1/app-access/sessions"
           ).length;
         return [
           {
@@ -648,22 +545,17 @@ it("updates active and revoked app sessions without manual refresh", async () =>
             status: sessionCalls < 2 ? "active" : "revoked",
             created_at: 1_780_000_000,
             approved_at: 1_780_000_000,
-            revoked_at: sessionCalls < 2 ? null : 1_780_000_500,
-          },
+            revoked_at: sessionCalls < 2 ? null : 1_780_000_500
+          }
         ];
       }
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(),
+    post: vi.fn()
   };
 
-  render(
-    <AppsPage
-      gateway={createAppAccessGateway(client)}
-      refreshIntervalMs={1000}
-    />,
-  );
+  render(<AppsPage gateway={createAppAccessGateway(client)} refreshIntervalMs={1000} />);
 
   await act(async () => {});
   expect(screen.getByText("Access allowed")).toBeInTheDocument();
@@ -675,9 +567,7 @@ it("updates active and revoked app sessions without manual refresh", async () =>
   expect(screen.getByText("No active access")).toBeInTheDocument();
 });
 
-function pendingChirpRequestClient(
-  requestedCapabilities: string[],
-): DaemonClient {
+function pendingChirpRequestClient(requestedCapabilities: string[]): DaemonClient {
   return {
     daemonUrl: "http://127.0.0.1:9862",
     get: vi.fn(async (path: string) => {
@@ -692,15 +582,15 @@ function pendingChirpRequestClient(
             requested_capabilities: requestedCapabilities,
             granted_capabilities: [],
             status: "pending",
-            created_at: 1_788_082_165,
-          },
+            created_at: 1_788_082_165
+          }
         ];
       }
       if (path === "/admin/v1/app-access/sessions") return [];
       if (path === "/admin/v1/identities") return localIdentitiesPayload();
       throw new Error(`unexpected path ${path}`);
     }),
-    post: vi.fn(async () => ({ ok: true })),
+    post: vi.fn(async () => ({ ok: true }))
   };
 }
 
@@ -709,13 +599,9 @@ async function expectChirpCapabilityBlocked(capability: string) {
 
   render(<AppsPage gateway={createAppAccessGateway(client)} />);
 
-  await userEvent.click(
-    await screen.findByRole("button", { name: /request details/i }),
-  );
+  await userEvent.click(await screen.findByRole("button", { name: /request details/i }));
   expect(
-    screen.getByText(
-      "This request includes permissions Console cannot approve.",
-    ),
+    screen.getByText("This request includes permissions Console cannot approve.")
   ).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Approve Chirp" })).toBeDisabled();
   expect(client.post).not.toHaveBeenCalled();

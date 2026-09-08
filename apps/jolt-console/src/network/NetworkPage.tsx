@@ -13,20 +13,12 @@ export function NetworkPage({ snapshot }: { snapshot: DaemonSnapshot }) {
           title="Bootstrap connection"
           description="Connection to the configured bootstrap peers."
         >
-          <span className="status-label">
-            {status?.bootstrap_state ?? "Not reported"}
-          </span>
+          <span className="status-label">{status?.bootstrap_state ?? "Not reported"}</span>
         </TaskRow>
-        <TaskRow
-          title="Direct peers"
-          description="Connections currently reported by this node."
-        >
+        <TaskRow title="Direct peers" description="Connections currently reported by this node.">
           <strong>{value(status?.direct_peers)}</strong>
         </TaskRow>
-        <TaskRow
-          title="Relayed peers"
-          description="Connections carried through a relay."
-        >
+        <TaskRow title="Relayed peers" description="Connections carried through a relay.">
           <strong>{value(status?.relayed_peers)}</strong>
         </TaskRow>
         <TaskRow
@@ -43,28 +35,20 @@ export function NetworkPage({ snapshot }: { snapshot: DaemonSnapshot }) {
         >
           <Link to="/relays">Manage relays</Link>
         </TaskRow>
-        <TaskRow
-          title="Connected peers"
-          description="Inspect addresses and transport details."
-        >
+        <TaskRow title="Connected peers" description="Inspect addresses and transport details.">
           <Link to="/diagnostics">View diagnostics</Link>
         </TaskRow>
       </TaskSection>
       <details className="task-disclosure">
         <summary>Troubleshooting steps</summary>
         <p>
-          A working local node and bootstrap connection do not prove an incoming
-          connection will succeed from another computer.
+          A working local node and bootstrap connection do not prove an incoming connection will
+          succeed from another computer.
         </p>
         <ol>
-          <li>
-            Check that both computers can connect to their local Jolt node.
-          </li>
+          <li>Check that both computers can connect to their local Jolt node.</li>
           <li>Check peer and bootstrap evidence on both computers.</li>
-          <li>
-            Inspect relay configuration and recent logs before changing network
-            settings.
-          </li>
+          <li>Inspect relay configuration and recent logs before changing network settings.</li>
         </ol>
       </details>
     </div>

@@ -11,15 +11,12 @@ import "./apps.css";
 
 export function AppsPage({
   gateway = tauriAppAccessGateway,
-  refreshIntervalMs = 5000,
+  refreshIntervalMs = 5000
 }: {
   gateway?: AppAccessGateway;
   refreshIntervalMs?: number;
 }) {
-  const { state, refresh, approve, reject, revoke } = useAppAccess(
-    gateway,
-    refreshIntervalMs,
-  );
+  const { state, refresh, approve, reject, revoke } = useAppAccess(gateway, refreshIntervalMs);
   const { data, busy, loading, refreshing, error } = state;
   const accessChangesDisabled = busy || refreshing || Boolean(error);
   const [selection, setSelection] = useState<{
@@ -47,8 +44,7 @@ export function AppsPage({
     <section className="apps-page" aria-label="App access">
       {error && (
         <div role="alert" className="access-error">
-          Could not update app access: {error}. Refresh before making another
-          access change.
+          Could not update app access: {error}. Refresh before making another access change.
         </div>
       )}
       {loading && <p role="status">Loading app access…</p>}
@@ -97,15 +93,11 @@ export function AppsPage({
         </details>
       )}
       <p className="access-footnote">
-        Apps are grouped by their reported app identifier. A familiar name is
-        not proof of who published an app.
+        Apps are grouped by their reported app identifier. A familiar name is not proof of who
+        published an app.
       </p>
       {selection && (
-        <RevokeDialog
-          {...selection}
-          revoke={revoke}
-          onClose={() => setSelection(null)}
-        />
+        <RevokeDialog {...selection} revoke={revoke} onClose={() => setSelection(null)} />
       )}
     </section>
   );

@@ -5,9 +5,7 @@ function readTheme(): Theme {
   const active = document.documentElement.dataset.theme;
   if (active === "light" || active === "dark") return active;
   try {
-    return localStorage.getItem("jolt.console.theme") === "dark"
-      ? "dark"
-      : "light";
+    return localStorage.getItem("jolt.console.theme") === "dark" ? "dark" : "light";
   } catch {
     return "light";
   }
@@ -26,11 +24,7 @@ function setTheme(theme: Theme) {
   window.dispatchEvent(new Event(changeEvent));
 }
 export function useTheme() {
-  const theme = useSyncExternalStore(
-    subscribe,
-    readTheme,
-    () => "light" as Theme,
-  );
+  const theme = useSyncExternalStore(subscribe, readTheme, () => "light" as Theme);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);

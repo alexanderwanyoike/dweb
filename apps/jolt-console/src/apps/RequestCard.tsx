@@ -8,7 +8,7 @@ export function RequestCard({
   identity,
   busy,
   onApprove,
-  onReject,
+  onReject
 }: {
   request: AppSessionGrant;
   identity: string | null;
@@ -32,15 +32,13 @@ export function RequestCard({
           onClick={() => setExpanded(!expanded)}
         >
           <strong>
-            {request.app_name} wants access{" "}
-            <span className="status-label">{request.status}</span>
+            {request.app_name} wants access <span className="status-label">{request.status}</span>
           </strong>
           <span>
             For <span className="mono">{owner}</span>
           </span>
           <span>
-            {request.requested_capabilities.length} requested permissions ·
-            Review details
+            {request.requested_capabilities.length} requested permissions · Review details
           </span>
           <span className="visually-hidden">request details</span>
         </button>
@@ -67,9 +65,7 @@ export function RequestCard({
           <p>
             <strong>{request.app_id}</strong>
             <br />
-            <span className="mono">
-              {request.app_origin || "Origin not reported"}
-            </span>
+            <span className="mono">{request.app_origin || "Origin not reported"}</span>
           </p>
           <PermissionList grants={request.requested_capabilities} />
           {blocked && (

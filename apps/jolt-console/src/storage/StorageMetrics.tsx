@@ -5,7 +5,7 @@ export function StorageMetrics({ stats }: { stats: CacheStats | null }) {
     { label: "Cached bytes", value: reportedBytes(stats?.total_cached) },
     { label: "Published bytes", value: reportedBytes(stats?.total_published) },
     { label: "Pinned items", value: value(stats?.pinned_items) },
-    { label: "Available", value: reportedBytes(stats?.available) },
+    { label: "Available", value: reportedBytes(stats?.available) }
   ];
   return (
     <div className="metric-grid">

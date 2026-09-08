@@ -7,13 +7,7 @@ export function RefreshButton({
   label?: string;
 }) {
   return (
-    <button
-      {...props}
-      type="button"
-      className="refresh-button"
-      aria-label={label}
-      title={label}
-    >
+    <button {...props} type="button" className="refresh-button" aria-label={label} title={label}>
       <svg
         width="16"
         height="16"

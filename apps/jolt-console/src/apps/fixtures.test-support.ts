@@ -1,9 +1,6 @@
 import type { AppSessionGrant } from "./model";
 
-export function grant(
-  id: string,
-  overrides: Partial<AppSessionGrant> = {},
-): AppSessionGrant {
+export function grant(id: string, overrides: Partial<AppSessionGrant> = {}): AppSessionGrant {
   return {
     request_id: `req_${id}`,
     session_id: id,
@@ -14,6 +11,6 @@ export function grant(
     granted_capabilities: ["resolve:public"],
     status: "active",
     created_at: 100,
-    ...overrides,
+    ...overrides
   };
 }

@@ -19,16 +19,13 @@ export function ConsoleShell({
   children,
   snapshot,
   consoleVersion,
-  updateCheck = null,
+  updateCheck = null
 }: ConsoleShellProps) {
   useTheme();
   const location = useLocation();
   const currentRoute =
-    consoleRoutes.find((route) => route.path === location.pathname) ??
-    consoleRoutes[0];
-  const advancedActive = advancedRoutes.some(
-    (route) => route.path === location.pathname,
-  );
+    consoleRoutes.find((route) => route.path === location.pathname) ?? consoleRoutes[0];
+  const advancedActive = advancedRoutes.some((route) => route.path === location.pathname);
   const daemonVersion = snapshot.status?.daemon_version ?? "unknown";
 
   return (
@@ -52,9 +49,7 @@ export function ConsoleShell({
               to={route.path}
               end={route.path === "/"}
               className={({ isActive }) =>
-                isActive || (route.id === "advanced" && advancedActive)
-                  ? "active"
-                  : ""
+                isActive || (route.id === "advanced" && advancedActive) ? "active" : ""
               }
             >
               <NavigationIcon name={route.id} />
@@ -75,15 +70,9 @@ export function ConsoleShell({
                 Update {updateCheck.version}
               </NavLink>
             ) : null}
-            {![
-              "apps",
-              "relays",
-              "settings",
-              "advanced",
-              "diagnostics",
-            ].includes(currentRoute.id) && (
-              <RefreshButton onClick={() => void snapshot.refresh()} />
-            )}
+            {!["apps", "relays", "settings", "advanced", "diagnostics"].includes(
+              currentRoute.id
+            ) && <RefreshButton onClick={() => void snapshot.refresh()} />}
           </div>
         </header>
 

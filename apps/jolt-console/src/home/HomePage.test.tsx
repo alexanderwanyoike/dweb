@@ -8,28 +8,20 @@ it("separates local health from unverified incoming connectivity", () => {
   render(
     <MemoryRouter>
       <HomePage snapshot={snapshot()} />
-    </MemoryRouter>,
+    </MemoryRouter>
   );
-  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent(
-    "Running",
-  );
+  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent("Running");
   expect(screen.getByText("Not verified")).toBeVisible();
-  expect(
-    screen.getByRole("link", { name: "Manage app access" }),
-  ).toHaveAttribute("href", "/apps");
+  expect(screen.getByRole("link", { name: "Manage app access" })).toHaveAttribute("href", "/apps");
 });
 it("marks retained information as stale when refresh fails", () => {
   render(
     <MemoryRouter>
-      <HomePage
-        snapshot={snapshot({ connected: false, lastError: "Offline" })}
-      />
-    </MemoryRouter>,
+      <HomePage snapshot={snapshot({ connected: false, lastError: "Offline" })} />
+    </MemoryRouter>
   );
   expect(screen.getByRole("alert")).toHaveTextContent("Last known information");
-  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent(
-    "Unavailable",
-  );
+  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent("Unavailable");
 });
 
 it("does not show a healthy node while the first connection is pending", () => {
@@ -40,12 +32,10 @@ it("does not show a healthy node while the first connection is pending", () => {
           connected: false,
           status: null,
           lastError: null,
-          lastRefresh: null,
+          lastRefresh: null
         })}
       />
-    </MemoryRouter>,
+    </MemoryRouter>
   );
-  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent(
-    "Checking",
-  );
+  expect(screen.getByRole("status", { name: "Local node" })).toHaveTextContent("Checking");
 });

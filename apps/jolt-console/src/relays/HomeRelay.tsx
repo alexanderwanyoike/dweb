@@ -33,8 +33,7 @@ export function HomeRelay({ access }: { access: RelaySettings }) {
       <details className="task-disclosure">
         <summary>Configure home relay</summary>
         <p className="task-help">
-          A home relay can support content availability. It is separate from
-          bootstrap discovery.
+          A home relay can support content availability. It is separate from bootstrap discovery.
         </p>
         <form
           className="task-form"
@@ -43,7 +42,7 @@ export function HomeRelay({ access }: { access: RelaySettings }) {
             void access.setHome({
               multiaddr: address.trim(),
               capability,
-              api_url: apiUrl.trim() || null,
+              api_url: apiUrl.trim() || null
             });
           }}
         >
@@ -84,9 +83,7 @@ export function HomeRelay({ access }: { access: RelaySettings }) {
             >
               Clear home relay
             </button>
-            <button disabled={access.busy || !address.trim()}>
-              Set home relay
-            </button>
+            <button disabled={access.busy || !address.trim()}>Set home relay</button>
           </footer>
         </form>
       </details>

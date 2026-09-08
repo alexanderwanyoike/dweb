@@ -4,35 +4,35 @@ import type {
   IdentityExportResponse,
   IdentityImportResponse,
   LocalIdentity,
-  LocalIdentitiesPayload,
+  LocalIdentitiesPayload
 } from "../daemon/types";
 export async function createLocalIdentity(
   client: DaemonClient,
-  label?: string,
+  label?: string
 ): Promise<LocalIdentity> {
   return client.post<LocalIdentity>("/admin/v1/identities", {
-    label: label || null,
+    label: label || null
   });
 }
 
 export async function selectLocalIdentity(
   client: DaemonClient,
-  identity: string,
+  identity: string
 ): Promise<LocalIdentitiesPayload> {
   return client.post<LocalIdentitiesPayload>("/admin/v1/identities/active", {
-    identity,
+    identity
   });
 }
 
 export async function deleteLocalIdentity(
   client: DaemonClient,
-  identity: string,
+  identity: string
 ): Promise<LocalIdentitiesPayload> {
   if (!client.delete) {
     throw new Error("Daemon client does not support identity deletion");
   }
   return client.delete<LocalIdentitiesPayload>(
-    `/admin/v1/identities/${encodeURIComponent(identity)}`,
+    `/admin/v1/identities/${encodeURIComponent(identity)}`
   );
 }
 
@@ -40,7 +40,7 @@ export async function exportIdentity(
   client: DaemonClient,
   passphrase: string,
   label?: string,
-  identity?: string,
+  identity?: string
 ): Promise<IdentityExportResponse> {
   const body: {
     passphrase: string | null;
@@ -48,15 +48,12 @@ export async function exportIdentity(
     identity?: string;
   } = {
     passphrase: passphrase || null,
-    label: label || null,
+    label: label || null
   };
   if (identity) {
     body.identity = identity;
   }
-  return client.post<IdentityExportResponse>(
-    "/admin/v1/identities/export",
-    body,
-  );
+  return client.post<IdentityExportResponse>("/admin/v1/identities/export", body);
 }
 
 export async function importIdentity(
@@ -64,13 +61,13 @@ export async function importIdentity(
   bundle: IdentityExportBundle,
   passphrase: string,
   allowOverwrite: boolean,
-  asLocalIdentity = false,
+  asLocalIdentity = false
 ): Promise<IdentityImportResponse> {
   return client.post<IdentityImportResponse>("/admin/v1/identities/import", {
     passphrase: passphrase || null,
     bundle,
     allow_overwrite: allowOverwrite,
-    as_local_identity: asLocalIdentity,
+    as_local_identity: asLocalIdentity
   });
 }
 
@@ -82,7 +79,7 @@ export function createIdentityGateway(client: DaemonClient) {
     backup: (identity: string, passphrase: string, label: string) =>
       exportIdentity(client, passphrase, label, identity),
     restore: (bundle: IdentityExportBundle, passphrase: string) =>
-      importIdentity(client, bundle, passphrase, false, true),
+      importIdentity(client, bundle, passphrase, false, true)
   };
 }
 export type IdentityGateway = ReturnType<typeof createIdentityGateway>;

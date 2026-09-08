@@ -10,10 +10,7 @@ const exact = new Map<string, [string, CapabilityInfo["kind"]]>([
   ["fetch:public", ["fetch public content", "read"]],
   ["ingress:read", ["read pending incoming app objects", "read"]],
   ["ingress:send", ["send incoming app objects by identity", "write"]],
-  [
-    "ingress:decide",
-    ["accept or reject pending incoming app objects", "write"],
-  ],
+  ["ingress:decide", ["accept or reject pending incoming app objects", "write"]]
 ]);
 const scoped: [string, string, CapabilityInfo["kind"]][] = [
   ["publish:encrypted:", "publish encrypted content under", "write"],
@@ -23,12 +20,8 @@ const scoped: [string, string, CapabilityInfo["kind"]][] = [
   ["pin:own:", "pin content it publishes under", "pin"],
   ["encrypt:", "encrypt content under", "write"],
   ["decrypt:", "decrypt content under", "read"],
-  [
-    "enumerate:self:",
-    "enumerate public records for this identity under",
-    "read",
-  ],
-  ["enumerate:any:", "enumerate public records for any identity under", "read"],
+  ["enumerate:self:", "enumerate public records for this identity under", "read"],
+  ["enumerate:any:", "enumerate public records for any identity under", "read"]
 ];
 
 export function capabilityInfo(code: string): CapabilityInfo {
@@ -37,11 +30,10 @@ export function capabilityInfo(code: string): CapabilityInfo {
     label: code,
     kind: "blocked" as const,
     grantable: false,
-    broadPath: false,
+    broadPath: false
   };
   const known = exact.get(code);
-  if (known)
-    return { ...base, label: known[0], kind: known[1], grantable: true };
+  if (known) return { ...base, label: known[0], kind: known[1], grantable: true };
   const subscription = parseSubscriptionCapability(code);
   if (subscription)
     return {
@@ -49,7 +41,7 @@ export function capabilityInfo(code: string): CapabilityInfo {
       kind: "read",
       grantable: true,
       label: `subscribe to verified records under ${subscription.scope} for ${subscription.identity === "any" ? "any identity" : subscription.identity}`,
-      broadPath: isBroadPathScope(subscription.scope),
+      broadPath: isBroadPathScope(subscription.scope)
     };
   const rule = scoped.find(([prefix]) => code.startsWith(prefix));
   if (!rule) return base;
@@ -60,7 +52,7 @@ export function capabilityInfo(code: string): CapabilityInfo {
     label: `${label} ${scope}`,
     kind,
     grantable: isGrantablePathCapability(prefix, code),
-    broadPath: isBroadPathScope(scope),
+    broadPath: isBroadPathScope(scope)
   };
 }
 
@@ -89,9 +81,7 @@ function parseSubscriptionCapability(capability: string) {
 
 function isGrantableSubscriptionIdentity(identity: string) {
   if (identity === "any") return true;
-  const label = identity.endsWith(".jolt")
-    ? identity.slice(0, -".jolt".length)
-    : identity;
+  const label = identity.endsWith(".jolt") ? identity.slice(0, -".jolt".length) : identity;
   return isCanonicalIdentityLabel(label);
 }
 
@@ -109,9 +99,7 @@ function isGrantablePathCapability(prefix: string, capability: string) {
 function isGrantablePathScope(scope: string) {
   if (!scope.startsWith("/") || /[?#\s]/.test(scope)) return false;
 
-  const wildcardCount = [...scope].filter(
-    (character) => character === "*",
-  ).length;
+  const wildcardCount = [...scope].filter((character) => character === "*").length;
   if (wildcardCount > 1) return false;
   if (wildcardCount === 1) {
     if (!scope.endsWith("/*")) return false;

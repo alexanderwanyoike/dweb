@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import type { DaemonLifecycleClient } from "../daemon/lifecycle";
 export function useConsoleStartup(
   lifecycleClient: DaemonLifecycleClient,
-  refresh: () => Promise<boolean>,
+  refresh: () => Promise<boolean>
 ) {
   useEffect(() => {
     let cancelled = false;
@@ -34,7 +34,7 @@ export function useConsoleStartup(
 }
 async function refreshSnapshotUntilConnected(
   refresh: () => Promise<boolean>,
-  cancelled: () => boolean,
+  cancelled: () => boolean
 ) {
   for (let attempt = 0; attempt < 10 && !cancelled(); attempt += 1) {
     if (await refresh()) return;

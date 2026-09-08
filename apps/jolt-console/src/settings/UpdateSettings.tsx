@@ -36,14 +36,10 @@ export function UpdateSettings({ updates }: { updates: ConsoleUpdates }) {
         </button>
       </div>
       {review && (
-        <Dialog
-          title="Install this update?"
-          busy={busy}
-          onClose={() => setReview(false)}
-        >
+        <Dialog title="Install this update?" busy={busy} onClose={() => setReview(false)}>
           <p>
-            Console will install the signed update and relaunch. A node owned by
-            Console will stop first. Externally managed nodes keep running.
+            Console will install the signed update and relaunch. A node owned by Console will stop
+            first. Externally managed nodes keep running.
           </p>
           {check?.available && (
             <p>
