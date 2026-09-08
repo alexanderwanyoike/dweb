@@ -23,7 +23,7 @@ const files = {
 };
 
 const requiredSections = [
-  "Overview",
+  "Home",
   "Identity",
   "Apps",
   "Network",
