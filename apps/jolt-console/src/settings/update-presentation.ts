@@ -9,8 +9,7 @@ export function updateTitle({ check, busy, installing }: ConsoleUpdates) {
   return "Update status unknown";
 }
 export function updateSummary(updateCheck: ConsoleUpdateCheck | null) {
-  if (!updateCheck)
-    return "Console checks for signed updates when the app opens.";
+  if (!updateCheck) return "Console checks for signed updates when the app opens.";
   if (updateCheck.available) {
     return "A signed Console update is available. Installing will relaunch Console after the update is applied.";
   }

@@ -26,10 +26,7 @@ export type DaemonSnapshot = {
 
 type SnapshotState = Omit<DaemonSnapshot, "refresh">;
 
-export function useDaemonSnapshot(
-  client: DaemonClient,
-  refreshIntervalMs: number
-): DaemonSnapshot {
+export function useDaemonSnapshot(client: DaemonClient, refreshIntervalMs: number): DaemonSnapshot {
   const [state, setState] = useState<SnapshotState>({
     daemonUrl: client.daemonUrl,
     connected: false,

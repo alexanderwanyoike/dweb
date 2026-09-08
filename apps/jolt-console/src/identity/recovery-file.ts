@@ -9,10 +9,10 @@ export const tauriIdentityRecoveryFileClient: IdentityRecoveryFileClient = {
   save(identity: string, bundle: IdentityExportBundle) {
     return invoke<string | null>("identity_export_save_file", {
       identity,
-      bundle,
+      bundle
     });
   },
   open() {
     return invoke<IdentityExportBundle | null>("identity_export_open_file");
-  },
+  }
 };

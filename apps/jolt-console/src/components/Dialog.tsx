@@ -3,7 +3,7 @@ export function Dialog({
   title,
   children,
   busy = false,
-  onClose,
+  onClose
 }: {
   title: string;
   children: ReactNode;
@@ -17,7 +17,7 @@ export function Dialog({
     dialog.showModal();
     dialog
       .querySelector<HTMLElement>(
-        "input:not([disabled]), select:not([disabled]), textarea:not([disabled])",
+        "input:not([disabled]), select:not([disabled]), textarea:not([disabled])"
       )
       ?.focus();
     return () => dialog.close();

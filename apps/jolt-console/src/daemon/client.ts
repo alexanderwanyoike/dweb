@@ -6,7 +6,7 @@ import type {
   DaemonStatus,
   LocalIdentitiesPayload,
   PeerInfo,
-  PublishedContent,
+  PublishedContent
 } from "./types";
 
 export const DEFAULT_DAEMON_URL = "http://127.0.0.1:9862";
@@ -28,38 +28,32 @@ export const tauriDaemonClient: DaemonClient = {
   },
   delete<T>(path: string) {
     return invoke<T>("daemon_delete", { path });
-  },
+  }
 };
 
-export async function loadDaemonPayload(
-  client: DaemonClient,
-): Promise<DaemonPayload> {
-  const [status, peers, cacheStats, cacheEntries, published, localIdentities] =
-    await Promise.all([
-      client.get<DaemonStatus>("/api/v1/status"),
-      client.get<PeerInfo[]>("/api/v1/peers"),
-      client.get<CacheStats>("/api/v1/cache/stats"),
-      client.get<CacheEntry[]>("/api/v1/cache/entries"),
-      client.get<PublishedContent[]>("/api/v1/published"),
-      client.get<LocalIdentitiesPayload>("/admin/v1/identities"),
-    ]);
+export async function loadDaemonPayload(client: DaemonClient): Promise<DaemonPayload> {
+  const [status, peers, cacheStats, cacheEntries, published, localIdentities] = await Promise.all([
+    client.get<DaemonStatus>("/api/v1/status"),
+    client.get<PeerInfo[]>("/api/v1/peers"),
+    client.get<CacheStats>("/api/v1/cache/stats"),
+    client.get<CacheEntry[]>("/api/v1/cache/entries"),
+    client.get<PublishedContent[]>("/api/v1/published"),
+    client.get<LocalIdentitiesPayload>("/admin/v1/identities")
+  ]);
 
   return {
     status,
     peers,
     cacheStats,
     cacheEntries,
-    published: filterPublishedForActiveIdentity(
-      published,
-      localIdentities.active_identity,
-    ),
-    localIdentities,
+    published: filterPublishedForActiveIdentity(published, localIdentities.active_identity),
+    localIdentities
   };
 }
 
 function filterPublishedForActiveIdentity(
   published: PublishedContent[],
-  activeIdentity?: string | null,
+  activeIdentity?: string | null
 ): PublishedContent[] {
   if (!activeIdentity) return published;
   const addressPrefix = `${activeIdentity}/`;

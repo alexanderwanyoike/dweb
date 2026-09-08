@@ -1,7 +1,6 @@
 import type { LocalIdentitiesPayload } from "../daemon/types";
 
-export type AppSessionStatus =
-  "pending" | "active" | "rejected" | "revoked" | "expired";
+export type AppSessionStatus = "pending" | "active" | "rejected" | "revoked" | "expired";
 
 export type AppSessionGrant = {
   request_id: string;
@@ -56,7 +55,7 @@ export function groupApplications(sessions: AppSessionGrant[]): AppAccess[] {
       id: session.app_id,
       name: session.app_name,
       active: [],
-      history: [],
+      history: []
     };
     (session.status === "active" ? app.active : app.history).push(session);
     groups.set(app.id, app);
@@ -65,7 +64,7 @@ export function groupApplications(sessions: AppSessionGrant[]): AppAccess[] {
     (a, b) =>
       Number(b.active.length > 0) - Number(a.active.length > 0) ||
       a.name.localeCompare(b.name) ||
-      a.id.localeCompare(b.id),
+      a.id.localeCompare(b.id)
   );
 }
 
@@ -84,26 +83,18 @@ export function identityGroups(sessions: AppSessionGrant[]) {
   return [...groups].map(([identity, sessions]) => ({ identity, sessions }));
 }
 
-export function olderSession(
-  session: AppSessionGrant,
-  now = Date.now() / 1000,
-) {
+export function olderSession(session: AppSessionGrant, now = Date.now() / 1000) {
   return now - (session.last_used_at ?? session.created_at) > 30 * 24 * 60 * 60;
 }
 
 export function exactGrants(sessions: AppSessionGrant[]) {
-  return [
-    ...new Set(sessions.flatMap((session) => session.granted_capabilities)),
-  ].sort();
+  return [...new Set(sessions.flatMap((session) => session.granted_capabilities))].sort();
 }
 
 export function permissionsDiffer(sessions: AppSessionGrant[]) {
   return (
-    new Set(
-      sessions.map((session) =>
-        JSON.stringify([...session.granted_capabilities].sort()),
-      ),
-    ).size > 1
+    new Set(sessions.map((session) => JSON.stringify([...session.granted_capabilities].sort())))
+      .size > 1
   );
 }
 

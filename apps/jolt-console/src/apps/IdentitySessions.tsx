@@ -8,7 +8,7 @@ export function IdentitySessions({
   sessions,
   identities,
   busy,
-  onRevoke,
+  onRevoke
 }: {
   identity: string;
   sessions: AppSessionGrant[];
@@ -17,7 +17,7 @@ export function IdentitySessions({
   onRevoke(session: AppSessionGrant): void;
 }) {
   const local = identities.identities.find(
-    (item) => item.address.replace(/\.jolt$/, "") === identity,
+    (item) => item.address.replace(/\.jolt$/, "") === identity
   );
   const older = sessions.filter((session) => olderSession(session));
   const recent = sessions.filter((session) => !olderSession(session));
@@ -32,16 +32,14 @@ export function IdentitySessions({
   return (
     <section className="access-identity">
       <h4>{local?.label || identityFor(sessions[0])}</h4>
-      {local?.label && (
-        <p className="mono access-muted">{identityFor(sessions[0])}</p>
-      )}
+      {local?.label && <p className="mono access-muted">{identityFor(sessions[0])}</p>}
       {recent.map(renderSession)}
       {older.length > 0 && (
         <details className="access-history">
           <summary>Older authorised sessions ({older.length})</summary>
           <p>
-            These sessions still have access. Last used more than 30 days ago,
-            or never used since creation.
+            These sessions still have access. Last used more than 30 days ago, or never used since
+            creation.
           </p>
           {older.map(renderSession)}
         </details>

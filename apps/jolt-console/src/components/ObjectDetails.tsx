@@ -2,7 +2,7 @@ import { Dialog } from "./Dialog";
 export function ObjectDetails({
   title,
   fields,
-  onClose,
+  onClose
 }: {
   title: string;
   fields: Record<string, string | number | boolean | null | undefined>;

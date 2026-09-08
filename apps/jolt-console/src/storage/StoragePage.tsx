@@ -59,9 +59,7 @@ export function StoragePage({ snapshot }: { snapshot: DaemonSnapshot }) {
             Size: formatBytes(selected.size),
             Pinned: selected.pinned,
             "Cached at": new Date(selected.cached_at * 1000).toLocaleString(),
-            "Last accessed": new Date(
-              selected.last_accessed * 1000,
-            ).toLocaleString(),
+            "Last accessed": new Date(selected.last_accessed * 1000).toLocaleString()
           }}
           onClose={() => setSelected(null)}
         />

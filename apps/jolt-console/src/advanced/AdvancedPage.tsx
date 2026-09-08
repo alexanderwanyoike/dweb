@@ -1,15 +1,12 @@
 import { Link } from "react-router-dom";
-import {
-  tauriDaemonLifecycleClient,
-  type DaemonLifecycleClient,
-} from "../daemon/lifecycle";
+import { tauriDaemonLifecycleClient, type DaemonLifecycleClient } from "../daemon/lifecycle";
 import { useDaemonMonitor } from "../daemon/use-daemon-monitor";
 import { DaemonLog } from "../diagnostics/DaemonLog";
 import "../diagnostics/diagnostics.css";
 import { AdvancedNav } from "./AdvancedNav";
 
 export function AdvancedPage({
-  lifecycleClient = tauriDaemonLifecycleClient,
+  lifecycleClient = tauriDaemonLifecycleClient
 }: {
   lifecycleClient?: DaemonLifecycleClient;
 }) {

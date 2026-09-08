@@ -8,7 +8,7 @@ import { UpdateSettings } from "./UpdateSettings";
 export function SettingsPage({
   lifecycleClient,
   updates,
-  onNodeChanged,
+  onNodeChanged
 }: {
   lifecycleClient: DaemonLifecycleClient;
   updates: ConsoleUpdates;
@@ -20,10 +20,7 @@ export function SettingsPage({
       <NodeSettings client={lifecycleClient} onChanged={onNodeChanged} />
       <UpdateSettings updates={updates} />
       <TaskSection title="More controls">
-        <TaskRow
-          title="Network settings"
-          description="Bootstrap configuration and home relay."
-        >
+        <TaskRow title="Network settings" description="Bootstrap configuration and home relay.">
           <Link to="/relays">Manage relays</Link>
         </TaskRow>
         <TaskRow

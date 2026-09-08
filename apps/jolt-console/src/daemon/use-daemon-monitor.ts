@@ -2,10 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { DaemonLifecycleClient, DaemonLifecycleState } from "./lifecycle";
 import { errorMessage } from "../utils/use-action";
 
-export function useDaemonMonitor(
-  client: DaemonLifecycleClient,
-  intervalMs = 2000,
-) {
+export function useDaemonMonitor(client: DaemonLifecycleClient, intervalMs = 2000) {
   const [state, setState] = useState<DaemonLifecycleState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);

@@ -10,9 +10,7 @@ export function PublishedPage({ snapshot }: { snapshot: DaemonSnapshot }) {
   const [selected, setSelected] = useState<PublishedContent | null>(null);
   const [search, setSearch] = useState("");
   const items = snapshot.published.filter((item) =>
-    `${item.path} ${item.content_id}`
-      .toLowerCase()
-      .includes(search.toLowerCase()),
+    `${item.path} ${item.content_id}`.toLowerCase().includes(search.toLowerCase())
   );
   return (
     <div className="feature-page">
@@ -20,16 +18,11 @@ export function PublishedPage({ snapshot }: { snapshot: DaemonSnapshot }) {
       <SnapshotNotice snapshot={snapshot} />
       <TaskSection title="Published inventory">
         <p className="task-help mono">
-          {snapshot.localIdentities?.active_identity ??
-            "Selected identity not reported"}
+          {snapshot.localIdentities?.active_identity ?? "Selected identity not reported"}
         </p>
         <label className="inventory-search">
           Find published content
-          <input
-            type="search"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} />
         </label>
         <div className="inventory-table">
           <table>
@@ -65,8 +58,7 @@ export function PublishedPage({ snapshot }: { snapshot: DaemonSnapshot }) {
         )}
       </TaskSection>
       <p className="task-help">
-        Paths identify content. Console shows its metadata; apps own its meaning
-        and editing.
+        Paths identify content. Console shows its metadata; apps own its meaning and editing.
       </p>
       {selected && (
         <ObjectDetails
@@ -77,7 +69,7 @@ export function PublishedPage({ snapshot }: { snapshot: DaemonSnapshot }) {
             Path: selected.path,
             Size: formatBytes(selected.size),
             Availability: selected.pin_state,
-            "Relay peer": selected.relay?.peer_id,
+            "Relay peer": selected.relay?.peer_id
           }}
           onClose={() => setSelected(null)}
         />

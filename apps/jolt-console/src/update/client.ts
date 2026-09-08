@@ -60,4 +60,3 @@ export const tauriConsoleUpdateClient: ConsoleUpdateClient = {
     await relaunch();
   }
 };
-

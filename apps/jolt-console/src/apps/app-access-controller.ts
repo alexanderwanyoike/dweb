@@ -4,7 +4,7 @@ import type { AppAccessData, AppSessionGrant } from "./model";
 const empty: AppAccessData = {
   requests: [],
   sessions: [],
-  localIdentities: { active_identity: null, identities: [] },
+  localIdentities: { active_identity: null, identities: [] }
 };
 
 type Snapshot = {
@@ -21,7 +21,7 @@ export class AppAccessController {
     loading: true,
     refreshing: false,
     busy: false,
-    error: null,
+    error: null
   };
   private listeners = new Set<() => void>();
   private pending: Promise<boolean> | null = null;
@@ -32,7 +32,7 @@ export class AppAccessController {
 
   constructor(
     private gateway: AppAccessGateway,
-    private interval = 5000,
+    private interval = 5000
   ) {}
 
   getSnapshot = () => this.snapshot;
@@ -79,7 +79,7 @@ export class AppAccessController {
         this.failures++;
         this.publish({
           loading: false,
-          error: error instanceof Error ? error.message : String(error),
+          error: error instanceof Error ? error.message : String(error)
         });
         return false;
       })
@@ -100,22 +100,20 @@ export class AppAccessController {
   }
 
   private async perform<T>(operation: () => Promise<T>): Promise<T> {
-    if (this.snapshot.busy)
-      throw new Error("Another access change is in progress.");
+    if (this.snapshot.busy) throw new Error("Another access change is in progress.");
     const generation = this.generation;
     this.publish({ busy: true, error: null });
     clearTimeout(this.timer);
     try {
       await this.pending;
-      if (generation !== this.generation)
-        throw new Error("The Apps page was closed.");
+      if (generation !== this.generation) throw new Error("The Apps page was closed.");
       const result = await operation();
       if (generation === this.generation) await this.refresh();
       return result;
     } catch (error) {
       if (generation === this.generation)
         this.publish({
-          error: error instanceof Error ? error.message : String(error),
+          error: error instanceof Error ? error.message : String(error)
         });
       throw error;
     } finally {
@@ -126,29 +124,23 @@ export class AppAccessController {
     }
   }
 
-  approve = (request: AppSessionGrant) =>
-    this.perform(() => this.gateway.approve(request));
+  approve = (request: AppSessionGrant) => this.perform(() => this.gateway.approve(request));
 
-  reject = (request: AppSessionGrant) =>
-    this.perform(() => this.gateway.reject(request));
+  reject = (request: AppSessionGrant) => this.perform(() => this.gateway.reject(request));
 
   revoke = (sessions: AppSessionGrant[]) =>
     this.perform(async () => {
       const generation = this.generation;
       const result = await this.gateway.revoke(sessions);
       if (generation !== this.generation) return result;
-      const revoked = new Set(
-        result.succeeded.map((session) => session.session_id),
-      );
+      const revoked = new Set(result.succeeded.map((session) => session.session_id));
       this.publish({
         data: {
           ...this.snapshot.data,
           sessions: this.snapshot.data.sessions.map((session) =>
-            revoked.has(session.session_id)
-              ? { ...session, status: "revoked" }
-              : session,
-          ),
-        },
+            revoked.has(session.session_id) ? { ...session, status: "revoked" } : session
+          )
+        }
       });
       return result;
     });

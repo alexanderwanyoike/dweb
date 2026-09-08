@@ -62,4 +62,3 @@ describe("tauriConsoleUpdateClient", () => {
     expect(relaunch).toHaveBeenCalledOnce();
   });
 });
-

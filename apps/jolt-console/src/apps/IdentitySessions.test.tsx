@@ -15,20 +15,16 @@ it("labels an identity and keeps old sessions authorised and individually revoca
       sessions={[session]}
       identities={{
         active_identity: null,
-        identities: [
-          { address: "alice.jolt", label: "Personal", active: false },
-        ],
+        identities: [{ address: "alice.jolt", label: "Personal", active: false }]
       }}
       busy={false}
       onRevoke={revoke}
-    />,
+    />
   );
   expect(screen.getByRole("heading", { name: "Personal" })).toBeVisible();
   await userEvent.click(screen.getByText("Older authorised sessions (1)"));
   expect(screen.getByText(/These sessions still have access/)).toBeVisible();
   await userEvent.click(screen.getByText("active"));
-  await userEvent.click(
-    screen.getByRole("button", { name: "Revoke this session" }),
-  );
+  await userEvent.click(screen.getByRole("button", { name: "Revoke this session" }));
   expect(revoke).toHaveBeenCalledExactlyOnceWith(session);
 });

@@ -8,15 +8,15 @@ it("does not install if stopping its owned node fails", async () => {
     check: vi.fn(async () => ({
       available: true as const,
       currentVersion: "1",
-      version: "2",
+      version: "2"
     })),
-    installAndRelaunch: vi.fn(),
+    installAndRelaunch: vi.fn()
   };
   const lifecycle = {
     status: vi.fn(async () => ({ ownership: "console" })),
     stop: vi.fn(async () => {
       throw new Error("Could not stop");
-    }),
+    })
   } as unknown as DaemonLifecycleClient;
   const { result } = renderHook(() => useConsoleUpdates(client, lifecycle));
   await waitFor(() => expect(result.current.check?.available).toBe(true));

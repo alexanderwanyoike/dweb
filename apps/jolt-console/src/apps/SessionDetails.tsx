@@ -5,7 +5,7 @@ import { sessionTimeLabel } from "./format";
 export function SessionDetails({
   session,
   busy,
-  onRevoke,
+  onRevoke
 }: {
   session: AppSessionGrant;
   busy: boolean;
@@ -23,17 +23,11 @@ export function SessionDetails({
           <br />
           Created: {sessionTimeLabel(session.created_at)}
         </p>
-        {session.expires_at && (
-          <p>Expires {sessionTimeLabel(session.expires_at)}</p>
-        )}
+        {session.expires_at && <p>Expires {sessionTimeLabel(session.expires_at)}</p>}
         <p className="mono">Session {session.session_id || "not reported"}</p>
         <PermissionList grants={session.granted_capabilities} />
         {session.status === "active" && (
-          <button
-            className="access-danger"
-            disabled={busy}
-            onClick={() => onRevoke(session)}
-          >
+          <button className="access-danger" disabled={busy} onClick={() => onRevoke(session)}>
             Revoke this session
           </button>
         )}

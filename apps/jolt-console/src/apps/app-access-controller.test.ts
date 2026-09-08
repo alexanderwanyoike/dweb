@@ -9,11 +9,10 @@ function client() {
     daemonUrl: "",
     get: vi.fn(async (path: string) => {
       if (path.endsWith("/sessions")) return [grant("one")];
-      if (path.endsWith("identities"))
-        return { identities: [], active_identity: null };
+      if (path.endsWith("identities")) return { identities: [], active_identity: null };
       return [];
     }),
-    post: vi.fn(async () => ({})),
+    post: vi.fn(async () => ({}))
   } as unknown as DaemonClient;
 }
 
@@ -56,7 +55,7 @@ it("does not publish a completed mutation after the page closes", async () => {
     () =>
       new Promise((resolve) => {
         complete = resolve;
-      }),
+      })
   );
   const pending = controller.revoke([grant("one")]);
   await Promise.resolve();

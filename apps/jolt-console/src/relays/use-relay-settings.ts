@@ -33,7 +33,7 @@ export function useRelaySettings(gateway: RelayGateway) {
         setSettings(data);
         setLoadError(null);
       }),
-    [action.run],
+    [action.run]
   );
   return {
     settings,
@@ -44,7 +44,7 @@ export function useRelaySettings(gateway: RelayGateway) {
     remove: (address: string) => change(() => gateway.remove(address)),
     setHome: (relay: Parameters<RelayGateway["setHome"]>[0]) =>
       change(() => gateway.setHome(relay)),
-    clearHome: () => change(gateway.clearHome),
+    clearHome: () => change(gateway.clearHome)
   };
 }
 export type RelaySettings = ReturnType<typeof useRelaySettings>;
