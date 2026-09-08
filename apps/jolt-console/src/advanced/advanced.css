@@ -1,19 +1,24 @@
 .advanced-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 20px;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 16px;
 }
 .advanced-nav a {
   color: var(--muted);
-  padding: 8px 10px;
-  font-size: 13px;
+  padding: 0 0 10px;
+  font-size: 12px;
   text-decoration: none;
-  border-radius: 5px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 .advanced-nav a.active {
-  background: var(--accent-soft);
+  border-bottom-color: var(--text);
   color: var(--text);
   font-weight: 600;
+}
+.advanced-log-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
 }

@@ -5,7 +5,7 @@ export function AdvancedNav() {
     <nav className="advanced-nav" aria-label="Advanced tools">
       {advancedRoutes.map((route) => (
         <NavLink key={route.id} to={route.path}>
-          {route.label}
+          {route.id === "advanced" ? "Daemon logs" : route.label}
         </NavLink>
       ))}
     </nav>

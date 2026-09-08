@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { DaemonLog } from "./DaemonLog";
+import { useDaemonMonitor } from "../daemon/use-daemon-monitor";
+import { useState } from "react";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
 import {
   tauriDaemonLifecycleClient,
   type DaemonLifecycleClient,
-  type DaemonLifecycleState,
 } from "../daemon/lifecycle";
 import { AdvancedNav } from "../advanced";
 import { TaskSection, TaskRow } from "../components/TaskSection";
@@ -18,24 +19,11 @@ export function DiagnosticsPage({
   snapshot: DaemonSnapshot;
   lifecycleClient?: DaemonLifecycleClient;
 }) {
-  const [lifecycle, setLifecycle] = useState<DaemonLifecycleState | null>(null);
+  const monitor = useDaemonMonitor(lifecycleClient);
+  const lifecycle = monitor.state;
   const [error, setError] = useState<string | null>(null);
   const [review, setReview] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    let active = true;
-    void lifecycleClient
-      .status()
-      .then((state) => {
-        if (active) setLifecycle(state);
-      })
-      .catch((cause) => {
-        if (active) setError(errorMessage(cause));
-      });
-    return () => {
-      active = false;
-    };
-  }, [lifecycleClient]);
   const details = JSON.stringify(
     {
       console_version: CONSOLE_VERSION,
@@ -89,18 +77,12 @@ export function DiagnosticsPage({
           <p className="task-help">No connected peers currently reported.</p>
         )}
       </TaskSection>
-      <TaskSection title="Recent log">
-        {lifecycle?.log_tail?.length ? (
-          <pre className="diagnostics-output">
-            {lifecycle.log_tail.join("\n")}
-          </pre>
-        ) : (
-          <p className="task-help">
-            No log lines are available from Console. An externally managed node
-            keeps its own logs.
-          </p>
-        )}
-      </TaskSection>
+      <DaemonLog
+        state={lifecycle}
+        error={monitor.error}
+        busy={monitor.busy}
+        onRefresh={monitor.refresh}
+      />
       <details className="task-disclosure">
         <summary>Raw connection state</summary>
         <pre className="diagnostics-output">{details}</pre>

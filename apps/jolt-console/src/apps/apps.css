@@ -12,8 +12,8 @@
   gap: 16px;
 }
 .apps-page button {
-  padding: 8px 14px;
-  min-height: 40px;
+  padding: 6px 12px;
+  min-height: 32px;
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
@@ -36,7 +36,7 @@
 }
 .access-app-list {
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 5px;
   background: var(--panel);
   overflow: hidden;
 }
@@ -44,7 +44,7 @@
   border-top: 1px solid var(--line);
 }
 .access-app-heading {
-  padding: 18px 20px;
+  padding: 14px 16px;
 }
 .app-monogram {
   display: grid;

@@ -1,3 +1,4 @@
+import { RefreshButton } from "../components/RefreshButton";
 import { useMemo, useState } from "react";
 import { tauriAppAccessGateway, type AppAccessGateway } from "./gateway";
 import type { AppSessionGrant } from "./model";
@@ -56,13 +57,11 @@ export function AppsPage({
           <h2 className="access-section-label">
             Access requests <span>{pending.length}</span>
           </h2>
-          <button
+          <RefreshButton
             disabled={refreshing || busy}
             onClick={() => void refresh()}
-            aria-label="Refresh app access"
-          >
-            Refresh
-          </button>
+            label="Refresh app access"
+          />
         </div>
         {pending.length === 0 && !loading && !error && (
           <p className="access-muted">No app requests yet.</p>

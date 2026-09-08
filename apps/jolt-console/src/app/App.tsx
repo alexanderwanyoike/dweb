@@ -96,7 +96,10 @@ export function ConsoleApp({
               />
             }
           />
-          <Route path="/advanced" element={<AdvancedPage />} />
+          <Route
+            path="/advanced"
+            element={<AdvancedPage lifecycleClient={lifecycleClient} />}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ConsoleShell>

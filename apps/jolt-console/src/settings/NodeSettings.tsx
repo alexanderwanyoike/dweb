@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { RefreshButton } from "../components/RefreshButton";
 import { useState } from "react";
 import type { DaemonLifecycleClient } from "../daemon/lifecycle";
 import { Dialog } from "../components/Dialog";
@@ -23,9 +25,11 @@ export function NodeSettings({
     <TaskSection
       title="Your node"
       action={
-        <button disabled={busy} onClick={() => void controls.refresh()}>
-          Refresh lifecycle
-        </button>
+        <RefreshButton
+          disabled={busy}
+          onClick={() => void controls.refresh()}
+          label="Refresh lifecycle"
+        />
       }
     >
       <TaskRow
@@ -73,6 +77,7 @@ export function NodeSettings({
         >
           Stop node
         </button>
+        <Link to="/advanced">Daemon logs</Link>
       </div>
       {pending && (
         <Dialog

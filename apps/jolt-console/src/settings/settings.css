@@ -12,3 +12,13 @@
   border: 1px solid var(--line);
   border-radius: 6px;
 }
+
+.node-actions {
+  align-items: center;
+}
+.node-actions a {
+  margin-left: auto;
+  color: var(--text);
+  font-size: 12px;
+  text-underline-offset: 3px;
+}

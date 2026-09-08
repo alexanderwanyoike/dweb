@@ -1,5 +1,8 @@
-import {advancedRoutes} from "../advanced";
-import { ThemeToggle } from "./ThemeToggle";
+import { useTheme } from "./use-theme";
+import { NodeStatus } from "./NodeStatus";
+import { NavigationIcon } from "./NavigationIcon";
+import { advancedRoutes } from "../advanced";
+import { RefreshButton } from "./RefreshButton";
 import { NavLink, useLocation } from "react-router-dom";
 import { consoleRoutes, primaryRoutes } from "../app/navigation";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
@@ -18,11 +21,14 @@ export function ConsoleShell({
   consoleVersion,
   updateCheck = null,
 }: ConsoleShellProps) {
+  useTheme();
   const location = useLocation();
   const currentRoute =
     consoleRoutes.find((route) => route.path === location.pathname) ??
     consoleRoutes[0];
-  const advancedActive = advancedRoutes.some(route=>route.path===location.pathname);
+  const advancedActive = advancedRoutes.some(
+    (route) => route.path === location.pathname,
+  );
   const daemonVersion = snapshot.status?.daemon_version ?? "unknown";
 
   return (
@@ -34,61 +40,65 @@ export function ConsoleShell({
             <path d="M17 43 25 17h8l-8 26zm15 0 8-26h8l-8 26z" fill="#d9ff43" />
           </svg>
           <div>
-            <strong>Jolt Console</strong>
-            <span>Your local connection</span>
+            <strong>Jolt</strong>
+            <span>Console</span>
           </div>
         </div>
 
         <nav className="section-nav">
           {primaryRoutes.map((route) => (
-            <NavLink key={route.id} to={route.path} end={route.path === "/"}
-              className={({isActive})=>isActive || (route.id==="advanced" && advancedActive) ? "active" : ""}>
+            <NavLink
+              key={route.id}
+              to={route.path}
+              end={route.path === "/"}
+              className={({ isActive }) =>
+                isActive || (route.id === "advanced" && advancedActive)
+                  ? "active"
+                  : ""
+              }
+            >
+              <NavigationIcon name={route.id} />
               {route.label}
             </NavLink>
           ))}
         </nav>
-
-        <div className="daemon-card">
-          <span className="eyebrow">Daemon</span>
-          <strong>{snapshot.connected ? "Connected" : "Disconnected"}</strong>
-          <span className="mono">{snapshot.daemonUrl}</span>
-          <div className="version-list" aria-label="Runtime versions">
-            <span>Console v{consoleVersion}</span>
-            <span>Daemon v{daemonVersion}</span>
-          </div>
-        </div>
       </aside>
 
       <main className="workspace">
         <header className="topbar">
           <div>
-            <h1>{currentRoute.label}</h1>
-            <p className="page-description">{currentRoute.description}</p>
+            <h1>{advancedActive ? "Advanced" : currentRoute.label}</h1>
           </div>
           <div className="topbar-actions">
-            <ThemeToggle />
             {updateCheck?.available ? (
               <NavLink className="status-pill pending" to="/settings">
                 Update {updateCheck.version}
               </NavLink>
             ) : null}
-            <span
-              className={`status-pill ${snapshot.connected ? "ok" : "pending"}`}
-            >
-              {snapshot.connected ? "connected" : "offline"}
-            </span>
-            {!["apps", "relays", "settings", "advanced"].includes(
-              currentRoute.id,
-            ) && (
-              <button type="button" onClick={() => void snapshot.refresh()}>
-                Refresh
-              </button>
+            {![
+              "apps",
+              "relays",
+              "settings",
+              "advanced",
+              "diagnostics",
+            ].includes(currentRoute.id) && (
+              <RefreshButton onClick={() => void snapshot.refresh()} />
             )}
           </div>
         </header>
 
         <div className="workspace-content">{children}</div>
       </main>
+      <footer className="console-statusbar">
+        <span className="console-node-summary">
+          Local node <NodeStatus snapshot={snapshot} />
+        </span>
+        <span className="console-endpoint mono">{snapshot.daemonUrl}</span>
+        <span className="version-list" aria-label="Runtime versions">
+          <span>Console v{consoleVersion}</span>
+          <span>Node v{daemonVersion}</span>
+        </span>
+      </footer>
     </div>
   );
 }
