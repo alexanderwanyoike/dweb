@@ -1,0 +1,248 @@
+.feature-page {
+  display: grid;
+  gap: 24px;
+  max-width: 100%;
+}
+.task-section {
+  min-width: 0;
+}
+.task-section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.task-section h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0;
+}
+.task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.task-row > div:first-child {
+  min-width: 0;
+}
+.task-row h3 {
+  font-size: 15px;
+  margin: 0 0 5px;
+  font-weight: 600;
+}
+.task-row p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.task-help {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.task-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.task-actions a {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-underline-offset: 4px;
+}
+.task-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.task-columns .task-row {
+  display: block;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.task-columns .task-actions {
+  margin-top: 16px;
+}
+.task-disclosure {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.task-disclosure summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.task-disclosure p {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.console-dialog {
+  width: 520px;
+  max-width: calc(100vw - 64px);
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  overflow: hidden;
+}
+.console-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.console-dialog::backdrop {
+  background: #0008;
+}
+.console-dialog > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.console-dialog h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.console-dialog header button {
+  width: 36px;
+  font-size: 22px;
+}
+.dialog-body {
+  padding: 24px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.dialog-body p {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.task-form {
+  display: grid;
+  gap: 16px;
+}
+.task-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.task-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.task-form select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.task-form footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+.task-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.feature-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.inventory-search {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px 0;
+  font-size: 13px;
+}
+.inventory-search input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 6px;
+}
+.inventory-table {
+  overflow-x: auto;
+}
+.inventory-table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+.inventory-table th {
+  text-align: left;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 12px;
+  background: var(--panel-strong);
+}
+.inventory-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+  max-width: 320px;
+}
+.object-details {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+  font-size: 13px;
+}
+.object-details > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+}
+.object-details dt {
+  color: var(--muted);
+}
+.object-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: monospace;
+}
+.task-row h3 {
+  overflow-wrap: anywhere;
+}
+.task-actions select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: inherit;
+}

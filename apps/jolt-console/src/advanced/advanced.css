@@ -1,0 +1,19 @@
+.advanced-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+}
+.advanced-nav a {
+  color: var(--muted);
+  padding: 8px 10px;
+  font-size: 13px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.advanced-nav a.active {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 600;
+}

@@ -13,7 +13,7 @@ const files = {
   navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8") + readFileSync(join(root, "src/advanced/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
   appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
-  settingsPage: readFileSync(join(root, "src/sections/SettingsPage.tsx"), "utf8"),
+  settingsPage: readFileSync(join(root, "src/settings/UpdateSettings.tsx"), "utf8"),
   updateClient: readFileSync(join(root, "src/update/client.ts"), "utf8"),
   styles: readFileSync(join(root, "src/styles.css"), "utf8"),
   tauriConfig: readFileSync(join(root, "src-tauri/tauri.conf.json"), "utf8"),
@@ -134,7 +134,7 @@ if (
   throw new Error("Console package metadata must expose the Linux packaging script");
 }
 
-for (const marker of ["console-shell", "sidebar", "section-panel"]) {
+for (const marker of ["console-shell", "sidebar", "workspace-content"]) {
   if (!files.styles.includes(marker)) {
     throw new Error(`Missing layout marker in src/styles.css: ${marker}`);
   }

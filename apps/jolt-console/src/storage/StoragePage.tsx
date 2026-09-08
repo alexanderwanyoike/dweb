@@ -5,8 +5,8 @@ import { AdvancedNav } from "../advanced";
 import { SnapshotNotice } from "../components/SnapshotNotice";
 import { ObjectDetails } from "../components/ObjectDetails";
 import { TaskSection } from "../components/TaskSection";
-import { MetricCard, MetricGrid } from "../components/primitives";
-import { formatBytes, shortId, value } from "../utils/format";
+import { StorageMetrics } from "./StorageMetrics";
+import { formatBytes, shortId } from "../utils/format";
 export function StoragePage({ snapshot }: { snapshot: DaemonSnapshot }) {
   const stats = snapshot.cacheStats;
   const [selected, setSelected] = useState<CacheEntry | null>(null);
@@ -15,33 +15,7 @@ export function StoragePage({ snapshot }: { snapshot: DaemonSnapshot }) {
       <AdvancedNav />
       <SnapshotNotice snapshot={snapshot} />
       <TaskSection title="Storage use">
-        <MetricGrid>
-          <MetricCard
-            label="Cached bytes"
-            value={
-              stats?.total_cached == null
-                ? "Not reported"
-                : formatBytes(stats.total_cached)
-            }
-          />
-          <MetricCard
-            label="Published bytes"
-            value={
-              stats?.total_published == null
-                ? "Not reported"
-                : formatBytes(stats.total_published)
-            }
-          />
-          <MetricCard label="Pinned items" value={value(stats?.pinned_items)} />
-          <MetricCard
-            label="Available"
-            value={
-              stats?.available == null
-                ? "Not reported"
-                : formatBytes(stats.available)
-            }
-          />
-        </MetricGrid>
+        <StorageMetrics stats={stats} />
       </TaskSection>
       <TaskSection title="Cached objects">
         <div className="inventory-table">

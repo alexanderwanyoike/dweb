@@ -1,0 +1,11 @@
+.diagnostics-output {
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+}
+
+.diagnostics-output {
+  min-height: 180px;
+  white-space: pre-wrap;
+  background: var(--ink);
+}

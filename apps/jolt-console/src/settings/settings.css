@@ -1,0 +1,14 @@
+.node-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.release-notes {
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}

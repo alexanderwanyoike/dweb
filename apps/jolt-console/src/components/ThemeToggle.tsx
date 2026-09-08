@@ -1,24 +1,6 @@
-import { useEffect, useState } from "react";
-type Theme = "light" | "dark";
-function savedTheme(): Theme {
-  try {
-    return localStorage.getItem("jolt.console.theme") === "dark"
-      ? "dark"
-      : "light";
-  } catch {
-    return "light";
-  }
-}
+import { useTheme } from "./use-theme";
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(savedTheme);
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    try {
-      localStorage.setItem("jolt.console.theme", theme);
-    } catch {
-      /* Appearance remains usable when persistent storage is unavailable. */
-    }
-  }, [theme]);
+  const { theme, setTheme } = useTheme();
   const next = theme === "light" ? "dark" : "light";
   return (
     <button
