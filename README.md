@@ -61,6 +61,6 @@ Jolt is experimental and has not had a full security review. Updates propagate
 between nodes over time; content stays available only while a peer or relay keeps
 a copy. There is no global identity directory or search service.
 
-[Architecture](docs/01-architecture.md) · [Protocol RFCs](rfcs/README.md) · [App permissions](docs/15-app-boundary-and-sessions.md) · [Releases](https://github.com/alexanderwanyoike/jolt/releases)
+[Architecture](docs/architecture.md) · [Protocol RFCs](rfcs/README.md) · [App permissions](docs/15-app-boundary-and-sessions.md) · [Releases](https://github.com/alexanderwanyoike/jolt/releases)
 
 MIT licensed.
