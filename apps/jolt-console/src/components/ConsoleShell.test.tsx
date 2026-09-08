@@ -44,3 +44,28 @@ it("offers one Apps refresh that reloads access, not the unrelated daemon summar
   expect(client.get).toHaveBeenCalledWith("/admin/v1/app-access/sessions");
   expect(refreshDaemon).not.toHaveBeenCalled();
 });
+
+it("restores the saved appearance without putting an appearance control in the toolbar", () => {
+  localStorage.setItem("jolt.console.theme", "dark");
+  delete document.documentElement.dataset.theme;
+  render(
+    <MemoryRouter>
+      <ConsoleShell
+        snapshot={{ connected: true, status: null } as DaemonSnapshot}
+        consoleVersion="0.5.3"
+      >
+        <div>Screen content</div>
+      </ConsoleShell>
+    </MemoryRouter>,
+  );
+  expect(document.documentElement.dataset.theme).toBe("dark");
+  expect(
+    screen.queryByRole("button", { name: /appearance/i }),
+  ).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Refresh" })).toHaveAttribute(
+    "title",
+    "Refresh",
+  );
+  localStorage.clear();
+  delete document.documentElement.dataset.theme;
+});

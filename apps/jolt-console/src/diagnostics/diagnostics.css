@@ -1,11 +1,76 @@
 .diagnostics-output {
   margin: 0;
-  padding: 16px;
+  padding: 14px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+}
+.daemon-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 10px;
+}
+.advanced-log-page > .daemon-log {
+  flex: 1;
+}
+.daemon-log-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.daemon-log-toolbar h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.daemon-log-toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
   color: var(--muted);
 }
-
-.diagnostics-output {
-  min-height: 180px;
+.daemon-log-output {
+  flex: 1;
+  min-height: 260px;
+  max-height: 420px;
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font:
+    12px/1.7 "Cascadia Mono",
+    "SFMono-Regular",
+    monospace;
   white-space: pre-wrap;
-  background: var(--ink);
+  overflow-wrap: anywhere;
+  overflow: auto;
+}
+.daemon-log-output:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+.daemon-log-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.advanced-process-footer {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+}
+.advanced-process-footer a {
+  color: var(--text);
+  text-underline-offset: 3px;
 }

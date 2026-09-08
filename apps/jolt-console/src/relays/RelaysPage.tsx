@@ -1,3 +1,4 @@
+import { RefreshButton } from "../components/RefreshButton";
 import { useMemo } from "react";
 import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
 import { AdvancedNav } from "../advanced";
@@ -17,9 +18,11 @@ export function RelaysPage({
       <AdvancedNav />
       <div className="feature-toolbar">
         <p className="task-help">Configuration saved on this computer.</p>
-        <button disabled={access.busy} onClick={() => void access.refresh()}>
-          Refresh relay settings
-        </button>
+        <RefreshButton
+          disabled={access.busy}
+          onClick={() => void access.refresh()}
+          label="Refresh relay settings"
+        />
       </div>
       {access.error && (
         <p role="alert" className="access-error">

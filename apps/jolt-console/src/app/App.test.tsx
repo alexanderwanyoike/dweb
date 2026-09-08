@@ -76,7 +76,7 @@ describe("ConsoleApp", () => {
 
     await userEvent.click(screen.getByRole("link", { name: "Advanced" }));
     await userEvent.click(
-      screen.getByRole("link", { name: "Open published content" }),
+      screen.getByRole("link", { name: "Published content" }),
     );
     expect(await screen.findByText("/demo/post")).toBeInTheDocument();
     expect(
@@ -266,7 +266,7 @@ describe("ConsoleApp", () => {
     );
 
     expect(await screen.findByText("Console v9.8.7")).toBeInTheDocument();
-    expect(await screen.findByText("Daemon v8.7.6")).toBeInTheDocument();
+    expect(await screen.findByText("Node v8.7.6")).toBeInTheDocument();
   });
 });
 
