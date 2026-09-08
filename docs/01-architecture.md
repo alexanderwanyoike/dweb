@@ -1,5 +1,9 @@
 # jolt Architecture
 
+For an introduction to the current processes, Console feature structure and SDK
+boundaries, start with the [architecture guide](architecture.md). This document
+contains the deeper node reference.
+
 ## Overview
 
 A jolt node is a single binary that runs on a user's machine. It combines a P2P networking layer, a local content store, and an HTTP server that exposes a REST API. The desktop UI is a separate Tauri app (jolt-console) that talks to the local daemon over that API. Apps run outside the daemon and connect through capability-scoped sessions (see [App Boundary and Sessions](15-app-boundary-and-sessions.md)).
