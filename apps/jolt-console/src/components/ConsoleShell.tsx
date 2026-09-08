@@ -1,3 +1,4 @@
+import { ThemeToggle } from "./ThemeToggle";
 import { NavLink, useLocation } from "react-router-dom";
 import { consoleRoutes } from "../app/navigation";
 import type { DaemonSnapshot } from "../daemon/useDaemonSnapshot";
@@ -14,11 +15,12 @@ export function ConsoleShell({
   children,
   snapshot,
   consoleVersion,
-  updateCheck = null
+  updateCheck = null,
 }: ConsoleShellProps) {
   const location = useLocation();
   const currentRoute =
-    consoleRoutes.find((route) => route.path === location.pathname) ?? consoleRoutes[0];
+    consoleRoutes.find((route) => route.path === location.pathname) ??
+    consoleRoutes[0];
   const daemonVersion = snapshot.status?.daemon_version ?? "unknown";
 
   return (
@@ -31,7 +33,7 @@ export function ConsoleShell({
           </svg>
           <div>
             <strong>Jolt Console</strong>
-            <span>local daemon control</span>
+            <span>Your local connection</span>
           </div>
         </div>
 
@@ -57,25 +59,34 @@ export function ConsoleShell({
       <main className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">First-party trust surface</p>
             <h1>{currentRoute.label}</h1>
+            {currentRoute.id === "apps" && (
+              <p className="page-description">
+                Choose what can act with your identity.
+              </p>
+            )}
           </div>
           <div className="topbar-actions">
+            <ThemeToggle />
             {updateCheck?.available ? (
               <NavLink className="status-pill pending" to="/settings">
                 Update {updateCheck.version}
               </NavLink>
             ) : null}
-            <span className={`status-pill ${snapshot.connected ? "ok" : "pending"}`}>
+            <span
+              className={`status-pill ${snapshot.connected ? "ok" : "pending"}`}
+            >
               {snapshot.connected ? "connected" : "offline"}
             </span>
-            <button type="button" onClick={() => void snapshot.refresh()}>
-              Refresh
-            </button>
+            {currentRoute.id !== "apps" && (
+              <button type="button" onClick={() => void snapshot.refresh()}>
+                Refresh
+              </button>
+            )}
           </div>
         </header>
 
-        {children}
+        <div className="workspace-content">{children}</div>
       </main>
     </div>
   );

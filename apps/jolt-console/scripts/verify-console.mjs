@@ -12,7 +12,7 @@ const files = {
   shell: readFileSync(join(root, "src/components/ConsoleShell.tsx"), "utf8"),
   navigation: readFileSync(join(root, "src/app/navigation.ts"), "utf8"),
   daemonClient: readFileSync(join(root, "src/daemon/client.ts"), "utf8"),
-  appsPage: readFileSync(join(root, "src/sections/AppsPage.tsx"), "utf8"),
+  appGateway: readFileSync(join(root, "src/apps/gateway.ts"), "utf8"),
   settingsPage: readFileSync(join(root, "src/sections/SettingsPage.tsx"), "utf8"),
   updateClient: readFileSync(join(root, "src/update/client.ts"), "utf8"),
   styles: readFileSync(join(root, "src/styles.css"), "utf8"),
@@ -54,7 +54,7 @@ if (!files.main.includes("createRoot") || !files.packageJson.includes("react-rou
   throw new Error("Console must be wired as a React app");
 }
 
-if (!files.appsPage.includes("/admin/v1/app-requests") || !files.appsPage.includes("/admin/v1/app-sessions")) {
+if (!files.appGateway.includes("/admin/v1/app-requests") || !files.appGateway.includes("/admin/v1/app-access/sessions")) {
   throw new Error("Apps section must reserve the app permission API surface");
 }
 
@@ -65,6 +65,10 @@ for (const marker of ["Jolt Console"]) {
 }
 
 const tauriConfig = JSON.parse(files.tauriConfig);
+const window = tauriConfig.app.windows[0];
+if (window.width !== 1100 || window.height !== 760 || window.resizable !== false || window.maximizable !== false) {
+  throw new Error("Console must use its fixed 1100 x 760 native window");
+}
 if (tauriConfig.bundle?.active !== true) {
   throw new Error("Tauri bundle must be enabled for v0 distribution");
 }
@@ -79,7 +83,7 @@ if (!Array.isArray(tauriConfig.bundle?.externalBin) || !tauriConfig.bundle.exter
 
 if (
   !files.packageJson.includes("build:jolt-sidecar") ||
-  !files.packageJson.includes("npm run build:jolt-sidecar && tauri") ||
+  !files.packageJson.includes("yarn build:jolt-sidecar && tauri") ||
   !files.devSidecarScript.includes("cargo build -p jolt-node --bin jolt") ||
   !files.devSidecarScript.includes("src-tauri/binaries/jolt-$TARGET_TRIPLE")
 ) {

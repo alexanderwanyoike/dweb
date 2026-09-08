@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ConsoleShell } from "../components/ConsoleShell";
 import { tauriDaemonClient, type DaemonClient } from "../daemon/client";
 import {
   tauriDaemonLifecycleClient,
-  type DaemonLifecycleClient
+  type DaemonLifecycleClient,
 } from "../daemon/lifecycle";
 import { useDaemonSnapshot } from "../daemon/useDaemonSnapshot";
-import { AppsPage } from "../sections/AppsPage";
+import { AppsPage, createAppAccessGateway } from "../apps";
 import { CachePage } from "../sections/CachePage";
 import { DiagnosticsPage } from "../sections/DiagnosticsPage";
 import { IdentityPage } from "../sections/IdentityPage";
@@ -19,7 +19,7 @@ import { SettingsPage } from "../sections/SettingsPage";
 import {
   tauriConsoleUpdateClient,
   type ConsoleUpdateCheck,
-  type ConsoleUpdateClient
+  type ConsoleUpdateClient,
 } from "../update/client";
 import { CONSOLE_VERSION } from "../version";
 
@@ -36,10 +36,13 @@ export function ConsoleApp({
   lifecycleClient = tauriDaemonLifecycleClient,
   updateClient = tauriConsoleUpdateClient,
   consoleVersion = CONSOLE_VERSION,
-  refreshIntervalMs = 5000
+  refreshIntervalMs = 5000,
 }: ConsoleAppProps) {
   const snapshot = useDaemonSnapshot(client, refreshIntervalMs);
-  const [updateCheck, setUpdateCheck] = useState<ConsoleUpdateCheck | null>(null);
+  const appAccess = useMemo(() => createAppAccessGateway(client), [client]);
+  const [updateCheck, setUpdateCheck] = useState<ConsoleUpdateCheck | null>(
+    null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +50,10 @@ export function ConsoleApp({
     void (async () => {
       try {
         const lifecycle = await lifecycleClient.status();
-        if (lifecycle.reachability !== "unavailable" || lifecycle.ownership !== "none") {
+        if (
+          lifecycle.reachability !== "unavailable" ||
+          lifecycle.ownership !== "none"
+        ) {
           return;
         }
 
@@ -91,14 +97,28 @@ export function ConsoleApp({
       >
         <Routes>
           <Route index element={<OverviewPage snapshot={snapshot} />} />
-          <Route path="/identity" element={<IdentityPage client={client} snapshot={snapshot} />} />
+          <Route
+            path="/identity"
+            element={<IdentityPage client={client} snapshot={snapshot} />}
+          />
           <Route
             path="/apps"
-            element={<AppsPage client={client} refreshIntervalMs={refreshIntervalMs} />}
+            element={
+              <AppsPage
+                gateway={appAccess}
+                refreshIntervalMs={refreshIntervalMs}
+              />
+            }
           />
-          <Route path="/network" element={<NetworkPage snapshot={snapshot} />} />
+          <Route
+            path="/network"
+            element={<NetworkPage snapshot={snapshot} />}
+          />
           <Route path="/relays" element={<RelaysPage snapshot={snapshot} />} />
-          <Route path="/published" element={<PublishedPage snapshot={snapshot} />} />
+          <Route
+            path="/published"
+            element={<PublishedPage snapshot={snapshot} />}
+          />
           <Route path="/cache" element={<CachePage snapshot={snapshot} />} />
           <Route
             path="/settings"
@@ -110,7 +130,10 @@ export function ConsoleApp({
               />
             }
           />
-          <Route path="/diagnostics" element={<DiagnosticsPage snapshot={snapshot} />} />
+          <Route
+            path="/diagnostics"
+            element={<DiagnosticsPage snapshot={snapshot} />}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ConsoleShell>
